@@ -15,33 +15,35 @@ class AppColors {
 class AppTheme {
   static final ThemeData light = ThemeData(
     brightness: Brightness.light,
+    fontFamily: 'inter',
     primaryColor: AppColors.primaryLight,
     scaffoldBackgroundColor: AppColors.primaryLight,
     cardColor: AppColors.containerLight,
-    appBarTheme:  AppBarTheme(backgroundColor: Colors.white, foregroundColor: AppColors.primaryDark),
+    appBarTheme:  AppBarTheme(backgroundColor: Colors.white, foregroundColor: AppColors.primaryDark, scrolledUnderElevation: 0),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(backgroundColor: AppColors.yellow),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: Colors.white,
       selectedItemColor: AppColors.yellow,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor: Colors.black,
     ),
   );
 
   static final ThemeData dark = ThemeData(
     brightness: Brightness.dark,
+    fontFamily: 'inter',
     primaryColor: AppColors.primaryDark,
     scaffoldBackgroundColor: AppColors.backgroundDark,
     cardColor: AppColors.containerDark,
-    appBarTheme:  AppBarTheme(backgroundColor: AppColors.backgroundDark, foregroundColor: AppColors.primaryLight),
+    appBarTheme:  AppBarTheme(backgroundColor: AppColors.backgroundDark, foregroundColor: AppColors.primaryLight, scrolledUnderElevation: 0),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(backgroundColor: AppColors.yellow),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: Color(0xFF1A1A1A),
+      backgroundColor: AppColors.backgroundDark,
       selectedItemColor: AppColors.yellow,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor: Colors.white,
     ),
   );
 }

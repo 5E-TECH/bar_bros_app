@@ -46,17 +46,23 @@ dependencies:
   flutter_credit_card: ^4.1.0
   sms_autofill: ^2.4.1
   geolocator: ^14.0.2
+  equatable: ^2.0.7
+  dio: ^5.9.0
+  dartz: ^0.10.1
+  intl_phone_field: ^3.2.0
+  intl: ^0.20.2
+  easy_localization: ^3.0.8
+  shimmer: ^3.0.0
+  image_picker: ^1.2.1
+  emoji_picker_flutter: ^4.4.0
+  share_plus: ^12.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^5.0.0
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -74,7 +80,7 @@ flutter:
     - assets/images/
     - assets/fonts/
     - assets/svgs/
-  #   - images/a_dot_burr.jpeg
+    - assets/translate/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -89,13 +95,17 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-     - family: Lobster
+     - family: Anton
        fonts:
-         - asset: assets/fonts/Lobster/Lobster-Regular.ttf
+         - asset: assets/fonts/Anton/Anton-Regular.ttf
 
      - family: inter
        fonts:
          - asset: assets/fonts/Inter_28pt-Regular.ttf
+
+     - family: Comic
+       fonts:
+         - asset: assets/fonts/Comic_Neue/ComicNeue-Regular.ttf
   #       - asset: fonts/Schyler-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic

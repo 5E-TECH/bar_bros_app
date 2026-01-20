@@ -1,137 +1,152 @@
 import 'package:flutter/material.dart';
+import 'package:bar_bros_user/core/constants/api_constants.dart';
 import 'package:bar_bros_user/core/theme/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PromoCard extends StatelessWidget {
-  final String discountTitle;
-  final String subtitle;
+  final String title;
+  final String? subtitle;
+  final String imageUrl;
+  final VoidCallback? onTap;
 
   const PromoCard({
     Key? key,
-    required this.discountTitle,
-    required this.subtitle,
+    required this.title,
+    this.subtitle,
+    required this.imageUrl,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin:  EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-             Color(0xFF1a2332),
-             Color(0xFF2d4a5e),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+    final isAssetImage = imageUrl.startsWith('assets/');
+    final hasImage = imageUrl.isNotEmpty;
+    final resolvedUrl = !hasImage || isAssetImage || imageUrl.startsWith('http')
+        ? imageUrl
+        : '${Constants.imageBaseUrl}$imageUrl';
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        height: 200.h,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r),
         ),
-        borderRadius: BorderRadius.circular(20.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10.r,
-            offset:  Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Stack(
-        children: [
-          // Decorative circles
-          Positioned(
-            right: -20,
-            top: -20,
-            child: Container(
-              width: 150.w,
-              height: 150.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.teal.withValues(alpha: 0.2),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.r),
+          child: Stack(
+            children: [
+              // Background Image
+              Positioned.fill(
+                child: !hasImage
+                    ? Container(
+                        color: AppColors.yellow,
+                      )
+                    : isAssetImage
+                        ? Image.asset(
+                            resolvedUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: AppColors.yellow,
+                              );
+                            },
+                          )
+                        : Image.network(
+                            resolvedUrl,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                color: AppColors.yellow,
+                              );
+                            },
+                          ),
               ),
-            ),
-          ),
-          Positioned(
-            right: 40,
-            bottom: -40,
-            child: Container(
-              width: 120.w,
-              height: 120.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.yellow.withValues(alpha: 0.15),
-              ),
-            ),
-          ),
 
-          Padding(
-            padding:  EdgeInsets.only(left: 20,top: 16),
-            child: Column(
-              spacing: 5,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding:  EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 5.h,
+              // Text Content
+              Positioned(
+                left: 20.w,
+                bottom: 20.h,
+                right: 20.w,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title.toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                        letterSpacing: 1.2,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withValues(alpha: 0.5),
+                            blurRadius: 8,
+                            offset: const Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (subtitle != null) ...[
+                      SizedBox(height: 4.h),
+                      Text(
+                        subtitle!,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.5,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.5),
+                              blurRadius: 4,
+                              offset: const Offset(1, 1),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+
+              // Optional corner badge
+              Positioned(
+                top: 16.h,
+                right: 16.w,
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.yellow,
                     borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                  child:  Text(
-                    'Yangi',
+                  child: Text(
+                    'YANGI'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.sp,
+                      letterSpacing: 1,
                     ),
                   ),
                 ),
-                 Text(
-                  'Cheklangan vaqt',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12.sp,
-                  ),
-                ),
-                Text(
-                  discountTitle,
-                  style:  TextStyle(
-                    color: Colors.white,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style:  TextStyle(
-                    color: Colors.white70,
-                    fontSize: 14.sp,
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
-                    padding:  EdgeInsets.symmetric(
-                      horizontal: 18.w,
-                      vertical: 5.h,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Text(
-                    'Bron Qilish',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

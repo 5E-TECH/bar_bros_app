@@ -1,6 +1,7 @@
 import 'package:bar_bros_user/core/theme/app_colors.dart';
 import 'package:bar_bros_user/features/theme/bloc/theme_bloc.dart';
 import 'package:bar_bros_user/models/models_ditails.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -113,7 +114,12 @@ class MasterItemWidget extends StatelessWidget {
                         ),
                         SizedBox(width: 8.w),
                         Text(
-                          '(${master.reviewCount} ta sharh)',
+                          tr(
+                            'reviews_count',
+                            namedArgs: {
+                              'count': master.reviewCount.toString(),
+                            },
+                          ),
                           style: TextStyle(
                             color: subtextColor,
                             fontSize: 10.sp,
@@ -130,7 +136,15 @@ class MasterItemWidget extends StatelessWidget {
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('${master.name} ${master.surname} tanlandi'),
+                      content: Text(
+                        tr(
+                          'master_selected',
+                          namedArgs: {
+                            'name': master.name,
+                            'surname': master.surname,
+                          },
+                        ),
+                      ),
                       backgroundColor: AppColors.yellow,
                       duration: const Duration(seconds: 1),
                     ),
@@ -143,7 +157,7 @@ class MasterItemWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
-                    'Tanlash',
+                    'Tanlash'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14.sp,

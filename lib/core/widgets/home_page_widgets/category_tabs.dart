@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bar_bros_user/core/theme/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CategoryTabs extends StatelessWidget {
@@ -15,11 +16,11 @@ class CategoryTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categories = [
-      "barchasi",
-      'Soch Kesish',
-      'Soch rangi',
-      'Soqolni kesish',
-      'Yuzni parvarish qilish',
+      "barchasi".tr(),
+      'Soch Kesish'.tr(),
+      'Soch rangi'.tr(),
+      'Soqolni kesish'.tr(),
+      'Yuzni parvarish qilish'.tr(),
     ];
 
     return SingleChildScrollView(

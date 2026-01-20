@@ -1,0 +1,17 @@
+import 'package:bar_bros_user/features/category/presentation/bloc/category_bloc.dart';
+import 'package:bar_bros_user/pages/category/widgets/gender_categories_screen.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+
+class WomanCategoriesPage extends StatelessWidget {
+  const WomanCategoriesPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GenderCategoriesScreen(
+      title: "Ayollar uchun xizmatlar".tr(),
+      loadEvent: const GetAllWomanCategoriesEvent(),
+      emptyMessage: "Ayollar uchun kategoriya topilmadi".tr(),
+    );
+  }
+}

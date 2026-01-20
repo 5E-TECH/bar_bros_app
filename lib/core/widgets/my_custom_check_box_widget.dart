@@ -1,4 +1,5 @@
 import 'package:bar_bros_user/core/theme/app_colors.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class MyCustomCheckbox extends StatefulWidget {
@@ -38,13 +39,13 @@ class _MyCustomCheckboxState extends State<MyCustomCheckbox> {
   Widget defaultRichText() {
     return RichText(
       text: TextSpan(
-        text: "Men ",
+        text: '${"Men".tr()} ',
         children: [
           TextSpan(
-            text: "maxfilik siyosaati ",
+            text: "maxfilik siyosaati".tr(),
             style: TextStyle(color: AppColors.yellow),
           ),
-          TextSpan(text: "va shartlariga roziman"),
+          TextSpan(text: " va shartlariga roziman".tr()),
         ],
       ),
     );

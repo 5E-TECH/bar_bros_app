@@ -1,27 +1,40 @@
 import 'package:bar_bros_user/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TextFieldWidget extends StatefulWidget {
   const TextFieldWidget({
     super.key,
-    required this.controller,
+    this.controller,
+    this.focusNode,
     this.label,
     this.hint,
     this.keyboardType,
     this.isPassword = false,
     this.prefixIcon,
     this.onChanged,
+    this.enabled = false,
+    this.inputFormatters,
+    this.validator,
+    this.filled,
+    this.fillColor,
 
   });
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
+  final FocusNode? focusNode;
   final String? label;
   final String? hint;
   final TextInputType? keyboardType;
   final bool isPassword;
   final Widget? prefixIcon;
   final ValueChanged<String>? onChanged;
+  final bool? enabled;
+  final List<TextInputFormatter>? inputFormatters;
+  final Widget? validator;
+  final bool? filled;
+  final Color? fillColor;
 
   @override
   State<TextFieldWidget> createState() => _TextFieldWidgetState();
@@ -33,11 +46,14 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      enabled: widget.enabled,
       controller: widget.controller,
+      focusNode: widget.focusNode,
       keyboardType: widget.keyboardType,
+      inputFormatters: widget.inputFormatters,
       obscureText: widget.isPassword ? _hidePassword : false,
       cursorColor: AppColors.yellow,
-      style: const TextStyle(color: Colors.black),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: widget.label,
         hintText: widget.hint,
@@ -45,9 +61,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         labelStyle: const TextStyle(color: Colors.white),
         prefixIcon: widget.prefixIcon,
 
-
-        filled: true,
-        fillColor: Colors.white,
+        filled: widget.filled,
+        fillColor: widget.fillColor,
 
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
         contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 5.w),

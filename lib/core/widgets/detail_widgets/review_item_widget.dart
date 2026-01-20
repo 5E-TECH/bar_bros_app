@@ -1,6 +1,7 @@
 import 'package:bar_bros_user/core/theme/app_colors.dart';
 import 'package:bar_bros_user/features/theme/bloc/theme_bloc.dart';
 import 'package:bar_bros_user/models/models_ditails.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -160,8 +161,8 @@ class _ReviewItemWidgetState extends State<ReviewItemWidget> {
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Javob berish funksiyasi'),
+                        SnackBar(
+                          content: Text('Javob berish funksiyasi'.tr()),
                           duration: Duration(seconds: 1),
                         ),
                       );
@@ -175,7 +176,7 @@ class _ReviewItemWidgetState extends State<ReviewItemWidget> {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          'Javob berish',
+                          'Javob berish'.tr(),
                           style: TextStyle(
                             color: subtextColor,
                             fontSize: 12.sp,
@@ -190,8 +191,8 @@ class _ReviewItemWidgetState extends State<ReviewItemWidget> {
                   GestureDetector(
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Ulashish funksiyasi'),
+                        SnackBar(
+                          content: Text('Ulashish funksiyasi'.tr()),
                           duration: Duration(seconds: 1),
                         ),
                       );

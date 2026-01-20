@@ -1,0 +1,29 @@
+<svg width="800" height="300" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background (optional - can be removed for transparent) -->
+  <rect width="800" height="300" fill="white" opacity="0"/>
+  
+  <!-- Main Text "STYLE" -->
+  <g transform="translate(400, 150)">
+    <!-- Large "S" with gradient -->
+    <text x="-220" y="20" font-family="Arial, sans-serif" font-size="140" font-weight="bold" fill="url(#gradientText)" style="letter-spacing: -5px;">S</text>
+    
+    <!-- "TYLE" -->
+    <text x="-70" y="20" font-family="Arial, sans-serif" font-size="110" font-weight="bold" fill="#2C3E50" style="letter-spacing: 2px;">TYLE</text>
+  </g>
+  
+  <!-- "UP" text -->
+  <text x="400" y="210" font-family="Arial, sans-serif" font-size="65" font-weight="300" letter-spacing="15" fill="url(#gradientYellow)" text-anchor="middle">UP</text>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gradientText" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#F7931E;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="gradientYellow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>

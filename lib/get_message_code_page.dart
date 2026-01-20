@@ -1,34 +1,42 @@
 import 'dart:async';
 
+import 'package:bar_bros_user/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:bar_bros_user/location_premission_page.dart';
 import 'package:bar_bros_user/write_name_page.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:sms_autofill/sms_autofill.dart';
 
 import 'core/theme/app_colors.dart';
 import 'core/widgets/elevated_button_widget.dart';
 
-
 class SmsVerificationScreen extends StatefulWidget {
   final String phoneNumber;
+  final String userId;
+  final bool isNewUser;
 
-  const SmsVerificationScreen({required this.phoneNumber});
+  const SmsVerificationScreen({
+    required this.phoneNumber,
+    required this.userId,
+    required this.isNewUser,
+    super.key,
+  });
 
   @override
   State<SmsVerificationScreen> createState() => _SmsVerificationScreenState();
 }
 
-// ✅ ADDED: with CodeAutoFill mixin for real SMS detection
 class _SmsVerificationScreenState extends State<SmsVerificationScreen>
     with CodeAutoFill {
-
   List<TextEditingController> _controllers = List.generate(
     4,
-        (_) => TextEditingController(),
+    (_) => TextEditingController(),
   );
   List<FocusNode> _focusCodes = List.generate(4, (_) => FocusNode());
-  int _countdown = 60;
+  int _countdown = 180;
   Timer? _timer;
 
   @override
@@ -38,38 +46,30 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
     _listenForSms();
   }
 
-  // Listen for incoming SMS
   Future<void> _listenForSms() async {
     try {
       await SmsAutoFill().listenForCode();
       print("🎧 Listening for SMS...");
     } catch (e) {
       print("❌ Error listening for SMS: $e");
-      // Fallback to simulation for testing
-      _simulateSmsAutoFill();
     }
   }
 
-  // ✅ NEW METHOD: Automatically called when SMS arrives!
   @override
   void codeUpdated() {
     print("📨 SMS Code Received: ${code ?? 'null'}");
 
     if (code != null && code!.length >= 4) {
       setState(() {
-        // Extract only digits from the SMS code
         String digitsOnly = code!.replaceAll(RegExp(r'[^0-9]'), '');
 
-        // Fill the text fields automatically
         for (int i = 0; i < 4 && i < digitsOnly.length; i++) {
           _controllers[i].text = digitsOnly[i];
         }
 
-        // Focus on last field and verify
         _focusCodes[3].requestFocus();
         FocusScope.of(context).unfocus();
 
-        // Auto verify the code
         _verifySms();
       });
     }
@@ -87,25 +87,11 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
     });
   }
 
-  // Simulation fallback (for testing without real SMS)
-  void _simulateSmsAutoFill() {
-    Future.delayed(Duration(seconds: 2), () {
-      if (mounted) {
-        List<String> code = ["1", "2", "3", "4"];
-        for (int i = 0; i < 4; i++) {
-          _controllers[i].text = code[i];
-        }
-        _focusCodes[3].requestFocus();
-      }
-    });
-  }
-
-  // ✅ UPDATED: Added SMS listener cleanup
   @override
   void dispose() {
     _timer?.cancel();
     SmsAutoFill().unregisterListener();
-    cancel(); // Cancel code listener from CodeAutoFill mixin
+    cancel();
     _controllers.forEach((controller) => controller.dispose());
     _focusCodes.forEach((node) => node.dispose());
     super.dispose();
@@ -124,10 +110,12 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
   void _verifySms() {
     String code = _controllers.map((c) => c.text).join();
     if (code.length == 4) {
-      print("✅ Code verified: $code");
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => WriteNamePage()),
+      context.read<AuthBloc>().add(
+        VerifyCodeEvent(
+          phoneNumber: widget.phoneNumber,
+          code: code,
+          isNewUser: widget.isNewUser,
+        ),
       );
     }
   }
@@ -139,124 +127,176 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
       });
       _startCountdown();
       _controllers.forEach((c) => c.clear());
-      _listenForSms(); // ✅ Start listening for new SMS
-      print("📤 Resending SMS code...");
+      _listenForSms();
+      context.read<AuthBloc>().add(RegisterEvent(widget.phoneNumber));
     }
+  }
+
+  String _formatTime(int seconds) {
+    int min = seconds ~/ 60;
+    int sec = seconds % 60;
+    return '${min.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w),
-        child: Column(
-          spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Tasdiqlash kodini kiriting",
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is VerifySuccess) {
+            // VerifySuccess means user needs to complete profile (set fullname)
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => WriteNamePage()),
+            );
+          } else if (state is AuthAuthenticated) {
+            // AuthAuthenticated means user profile is complete
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationPermissionPage(),
               ),
-            ),
-            Text(
-              widget.phoneNumber,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
+              (route) => false,
+            );
+          } else if (state is AuthError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
               ),
-            ),
-            Row(
+            );
+          } else if (state is RegisterSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Kod qayta yuborildi".tr()),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          final isLoading = state is AuthLoading;
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Column(
+              spacing: 10,
+              crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (index) {
-                return Container(
-                  width: 60.w,
-                  height: 60.h,
-                  margin: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: TextField(
-                    cursorColor: AppColors.yellow,
-                    controller: _controllers[index],
-                    focusNode: _focusCodes[index],
-                    textAlign: TextAlign.center,
-                    keyboardType: TextInputType.number,
-                    maxLength: 1,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    decoration: InputDecoration(
-                      counterText: "",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(color: AppColors.yellow),
+              children: [
+                Text(
+                  "Tasdiqlash kodini kiriting".tr(),
+                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  widget.phoneNumber,
+                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(4, (index) {
+                    return Container(
+                      width: 60.w,
+                      height: 60.h,
+                      margin: EdgeInsets.symmetric(horizontal: 8.w),
+                      child: TextField(
+                        cursorColor: AppColors.yellow,
+                        controller: _controllers[index],
+                        focusNode: _focusCodes[index],
+                        textAlign: TextAlign.center,
+                        keyboardType: TextInputType.number,
+                        maxLength: 1,
+                        enabled: !isLoading,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        decoration: InputDecoration(
+                          counterText: "",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide(color: AppColors.yellow),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                            borderSide: BorderSide(
+                              color: AppColors.yellow,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        onChanged: (value) => _onCodeChanged(index, value),
+                        onTap: () {
+                          if (_controllers[index].text.isNotEmpty) {
+                            _controllers[index].selection =
+                                TextSelection.fromPosition(
+                                  TextPosition(
+                                    offset: _controllers[index].text.length,
+                                  ),
+                                );
+                          }
+                        },
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: AppColors.yellow,
-                          width: 2,
+                    );
+                  }),
+                ),
+                GestureDetector(
+                  onTap: isLoading ? null : _resendCode,
+                  child: Text(
+                    _countdown > 0
+                        ? tr(
+                            'resend_code_timer',
+                            namedArgs: {
+                              'time': _formatTime(_countdown),
+                            },
+                          )
+                        : "Kodni qayta yuborish".tr(),
+                    style: TextStyle(
+                      color: _countdown > 0 || isLoading
+                          ? Colors.grey
+                          : AppColors.yellow,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (isLoading)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    child: CircularProgressIndicator(color: AppColors.yellow),
+                  ),
+                ElevatedButtonWidget(
+                  text: isLoading ? "Tekishirilmoqda...".tr() : "Kirish".tr(),
+                  onPressed: isLoading ? null : _verifySms,
+                ),
+                Container(
+                  padding: EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.blue[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.info_outline, color: Colors.blue, size: 20),
+                      SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          "SMS kodi avtomatik aniqlanadi va to'ldiriladi".tr(),
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.blue[800],
+                          ),
                         ),
                       ),
-                    ),
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (value) => _onCodeChanged(index, value),
-                    onTap: () {
-                      if (_controllers[index].text.isNotEmpty) {
-                        _controllers[index].selection =
-                            TextSelection.fromPosition(
-                              TextPosition(
-                                offset: _controllers[index].text.length,
-                              ),
-                            );
-                      }
-                    },
+                    ],
                   ),
-                );
-              }),
-            ),
-            GestureDetector(
-              onTap: _resendCode,
-              child: Text(
-                _countdown > 0
-                    ? 'Kodni qayta yuborish ($_countdown)'
-                    : 'Kodni qayta yuborish',
-                style: TextStyle(
-                  color: _countdown > 0 ? Colors.grey : AppColors.yellow,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
+              ],
             ),
-            ElevatedButtonWidget(
-              text: "Kirish",
-              onPressed: _verifySms,
-            ),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'SMS kodi avtomatik aniqlanadi va to\'ldiriladi',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.blue[800],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

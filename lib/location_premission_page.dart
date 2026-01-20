@@ -1,5 +1,6 @@
 import 'package:bar_bros_user/core/theme/app_colors.dart';
 import 'package:bar_bros_user/core/widgets/buttom_navigation_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -31,8 +32,9 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         _showErrorDialog(
-          "Joylashuv o‘chirilgan",
-          "Telefoningizda joylashuv xizmati yoqilmagan. Iltimos, sozlamalardan yoqing.",
+          "Joylashuv o‘chirilgan".tr(),
+          "Telefoningizda joylashuv xizmati yoqilmagan. Iltimos, sozlamalardan yoqing."
+              .tr(),
           onConfirm: () => Geolocator.openLocationSettings(),
         );
         return;
@@ -46,16 +48,18 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
 
       if (permission == LocationPermission.denied) {
         _showErrorDialog(
-          "Ruxsat berilmadi",
-          "Yaqin atrofdagi sartaroshxonalarni ko‘rish uchun joylashuvga ruxsat bering.",
+          "Ruxsat berilmadi".tr(),
+          "Yaqin atrofdagi sartaroshxonalarni ko‘rish uchun joylashuvga ruxsat bering."
+              .tr(),
         );
         return;
       }
 
       if (permission == LocationPermission.deniedForever) {
         _showErrorDialog(
-          "Ruxsat butunlay rad etildi",
-          "Ilova ishlay olmaydi. Iltimos, telefon sozlamalaridan BarBros ilovasiga joylashuv ruxsatini bering.",
+          "Ruxsat butunlay rad etildi".tr(),
+          "Ilova ishlay olmaydi. Iltimos, telefon sozlamalaridan BarBros ilovasiga joylashuv ruxsatini bering."
+              .tr(),
           onConfirm: () => Geolocator.openAppSettings(),
         );
         return;
@@ -66,14 +70,18 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
       );
 
       if (mounted) {
-        Navigator.of(context).pushReplacement(
+        Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (_) => AdvancedCurvedBottomNav(),
-          ), // Replace with your main page
+          ),
+          (route) => false,
         );
       }
     } catch (e) {
-      _showErrorDialog("Xatolik", "Joylashuvni aniqlashda xato yuz berdi.");
+      _showErrorDialog(
+        "Xatolik".tr(),
+        "Joylashuvni aniqlashda xato yuz berdi.".tr(),
+      );
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -99,11 +107,11 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                 Navigator.pop(context);
                 onConfirm();
               },
-              child: const Text("Sozlamalarga o‘tish"),
+              child: Text("Sozlamalarga o‘tish".tr()),
             ),
           TextButton(
             onPressed: () => _requestLocationPermission(),
-            child: const Text("Qayta urinish"),
+            child: Text("Qayta urinish".tr()),
           ),
         ],
       ),
@@ -121,7 +129,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                    CircularProgressIndicator(color: AppColors.yellow),
                    SizedBox(height: 20.h),
                   Text(
-                    "Joylashuv aniqlanmoqda...",
+                    "Joylashuv aniqlanmoqda...".tr(),
                     style: TextStyle(fontSize: 16.sp),
                   ),
                 ],
@@ -132,7 +140,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                   Icon(Icons.location_on, size: 100, color: AppColors.yellow),
                   const SizedBox(height: 30),
                   Text(
-                    "Joylashuvga ruxsat bering",
+                    "Joylashuvga ruxsat bering".tr(),
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
@@ -142,7 +150,8 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
-                      "Yaqin atrofdagi eng yaxshi sartaroshxonalarni topish uchun sizning joylashuvingiz kerak.",
+                      "Yaqin atrofdagi eng yaxshi sartaroshxonalarni topish uchun sizning joylashuvingiz kerak."
+                          .tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16.sp,
@@ -163,7 +172,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                       ),
                     ),
                     child: Text(
-                      "Ruxsat berish",
+                      "Ruxsat berish".tr(),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,
