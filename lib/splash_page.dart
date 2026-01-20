@@ -271,7 +271,6 @@ class _SplashPageSlideUpState extends State<SplashPageSlideUp>
                                   child: Text(
                                     "splash_s".tr(),
                                     style: TextStyle(
-                                      fontFamily: "Comic",
                                       fontSize: 70,
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
@@ -287,7 +286,6 @@ class _SplashPageSlideUpState extends State<SplashPageSlideUp>
                                 child: Text(
                                   "splash_tyle".tr(),
                                   style: TextStyle(
-                                    fontFamily: "Comic",
                                     fontSize: 45,
                                     color: textColor,
                                     fontWeight: FontWeight.bold,
@@ -319,7 +317,6 @@ class _SplashPageSlideUpState extends State<SplashPageSlideUp>
                                     child: Text(
                                       "splash_up".tr(),
                                       style: TextStyle(
-                                        fontFamily: "Comic",
                                         fontSize: 30,
                                         color: Colors.white,
                                         fontWeight: FontWeight.w900,

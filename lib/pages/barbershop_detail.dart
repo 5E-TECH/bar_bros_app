@@ -733,6 +733,15 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
     }).toList();
   }
 
+  List<String> _filterExpiredSlots(DateTime date, List<String> slots) {
+    final now = DateTime.now();
+    final isToday =
+        date.year == now.year && date.month == now.month && date.day == now.day;
+    if (!isToday) return slots;
+    final nowMinutes = now.hour * 60 + now.minute;
+    return slots.where((slot) => _timeToMinutes(slot) > nowMinutes).toList();
+  }
+
   Future<void> _loadAvailabilityForBarbers(
     List<Master> barbers,
     DateTime date,
@@ -1201,8 +1210,11 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
       final availability = availabilityByDate[dateKey];
       if (availability == null) continue;
       slots.addAll(
-        _filterSlotsByBusinessHours(
-          _filterToThirtyMinuteSlots(availability.freeSlots),
+        _filterExpiredSlots(
+          date,
+          _filterSlotsByBusinessHours(
+            _filterToThirtyMinuteSlots(availability.freeSlots),
+          ),
         ),
       );
     }
@@ -1212,8 +1224,11 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
   List<String> _freeSlotsForBarberDate(String barberId, DateTime date) {
     final availability = _availabilityForBarberDate(barberId, date);
     if (availability == null) return const [];
-    return _filterSlotsByBusinessHours(
-      _filterToThirtyMinuteSlots(availability.freeSlots),
+    return _filterExpiredSlots(
+      date,
+      _filterSlotsByBusinessHours(
+        _filterToThirtyMinuteSlots(availability.freeSlots),
+      ),
     );
   }
 
