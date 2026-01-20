@@ -134,7 +134,7 @@ class PromoCard extends StatelessWidget {
                     ],
                   ),
                   child: Text(
-                    'YANGI'.tr(),
+                    'yangi'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,

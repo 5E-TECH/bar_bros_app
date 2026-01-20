@@ -11,7 +11,7 @@ class LogoutButtonWidget extends StatelessWidget {
 
   const LogoutButtonWidget({
     super.key,
-    this.text = 'Chiqish',
+    this.text = 'chiqish',
     this.backgroundColor,
   });
 
@@ -56,14 +56,14 @@ class LogoutButtonWidget extends StatelessWidget {
           borderRadius: BorderRadius.circular(16.r),
         ),
         title: Text(
-          'Chiqish'.tr(),
+          'chiqish'.tr(),
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        content: Text('Haqiqatan ham tizimdan chiqmoqchimisiz?'.tr()),
+        content: Text('haqiqatan_ham_tizimdan_chiqmoqchimisiz'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: Text('Bekor qilish'.tr()),
+            child: Text('bekor_qilish'.tr()),
           ),
           TextButton(
             onPressed: () {
@@ -71,7 +71,7 @@ class LogoutButtonWidget extends StatelessWidget {
               context.read<AuthBloc>().add(LogoutEvent());
             },
             child: Text(
-              'Chiqish'.tr(),
+              'chiqish'.tr(),
               style: TextStyle(
                 color: Colors.red,
                 fontWeight: FontWeight.bold,

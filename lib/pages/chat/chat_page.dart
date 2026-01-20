@@ -132,7 +132,7 @@ class _ChatPageState extends State<ChatPage>
             color: isDark ? Colors.white : AppColors.primaryDark,
           ),
           decoration: InputDecoration(
-            hintText: 'Suhbatlarni qidirish...'.tr(),
+            hintText: 'suhbatlarni_qidirish'.tr(),
             hintStyle: TextStyle(color: Colors.grey),
             prefixIcon: Icon(Icons.search, color: Colors.grey),
             border: InputBorder.none,

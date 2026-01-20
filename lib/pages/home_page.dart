@@ -502,7 +502,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                                         const GetAllCategoriesEvent(),
                                       );
                                     },
-                                    child: Text("Qayta urinish".tr()),
+                                    child: Text("qayta_urinish".tr()),
                                   ),
                                 ],
                               ),
@@ -527,7 +527,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Erkaklar uchun xizmatlar".tr(),
+                                  "erkaklar_uchun_xizmatlar".tr(),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.sp),
@@ -543,7 +543,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                                         ),
                                       );
                                     },
-                                    child: Text("SeeAll".tr()))
+                                    child: Text("seeall".tr()))
                               ],
                             ),
                           ),
@@ -552,7 +552,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                             padding: EdgeInsets.all(32.r),
                             child: Center(
                               child: Text(
-                                  "Hech qanday kategoriyalar topilmadi"
+                                  "hech_qanday_kategoriyalar_topilmadi"
                                       .tr()),
                             ),
                           )
@@ -579,7 +579,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Ayollar uchun xizmatlar".tr(),
+                                  "ayollar_uchun_xizmatlar".tr(),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18.sp),
@@ -596,7 +596,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                                         ),
                                       );
                                     },
-                                    child: Text("SeeAll".tr()))
+                                    child: Text("seeall".tr()))
                               ],
                             ),
                           ),
@@ -605,7 +605,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                             padding: EdgeInsets.all(32.r),
                             child: Center(
                               child: Text(
-                                  "Hech qanday kategoriyalar topilmadi"
+                                  "hech_qanday_kategoriyalar_topilmadi"
                                       .tr()),
                             ),
                           )

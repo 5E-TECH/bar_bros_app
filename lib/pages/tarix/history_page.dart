@@ -61,7 +61,7 @@ class _HistoryPageState extends State<HistoryPage> {
           centerTitle: true,
           elevation: 0,
           title: Text(
-            "Orders".tr(),
+            "orders".tr(),
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
           ),
         ),
@@ -74,7 +74,7 @@ class _HistoryPageState extends State<HistoryPage> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
               child: CustomTabBar(
-                tabs: ["Kelgusi".tr(), "Tarix".tr()],
+                tabs: ["kelgusi".tr(), "tarix".tr()],
                 onTabChanged: (index) {
                   setState(() {
                     _previousTabIndex = _currentTabIndex;
@@ -149,7 +149,7 @@ class _HistoryPageState extends State<HistoryPage> {
           Icon(Icons.event_available, size: 80.r, color: Colors.grey),
           SizedBox(height: 16.h),
           Text(
-            "Bandlovlar yo'q!".tr(),
+            "bandlovlar_yoq".tr(),
             style: TextStyle(
               fontSize: 20.sp,
               fontWeight: FontWeight.w600,
@@ -158,7 +158,7 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
           SizedBox(height: 8.h),
           Text(
-            "Hech qanaga bandlov topilmadi.".tr(),
+            "hech_qanaga_bandlov_topilmadi".tr(),
             style: TextStyle(fontSize: 14.sp, color: subtitleColor),
           ),
         ],
@@ -242,17 +242,17 @@ class _HistoryPageState extends State<HistoryPage> {
   String _formatStatus(String status) {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'Kutilmoqda'.tr();
+        return 'kutilmoqda'.tr();
       case 'confirmed':
         return 'Qabul qilingan'.tr();
       case 'in_progress':
-        return 'Jarayonda'.tr();
+        return 'jarayonda'.tr();
       case 'completed':
-        return 'Bajarildi'.tr();
+        return 'bajarildi'.tr();
       case 'cancelled':
-        return 'Bekor qilindi'.tr();
+        return 'bekor_qilindi'.tr();
       case 'expired':
-        return 'Tugagan'.tr();
+        return 'tugagan'.tr();
       default:
         return status;
     }

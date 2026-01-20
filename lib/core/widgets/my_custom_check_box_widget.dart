@@ -39,13 +39,13 @@ class _MyCustomCheckboxState extends State<MyCustomCheckbox> {
   Widget defaultRichText() {
     return RichText(
       text: TextSpan(
-        text: '${"Men".tr()} ',
+        text: '${"men_2".tr()} ',
         children: [
           TextSpan(
-            text: "maxfilik siyosaati".tr(),
+            text: "maxfilik_siyosaati".tr(),
             style: TextStyle(color: AppColors.yellow),
           ),
-          TextSpan(text: " va shartlariga roziman".tr()),
+          TextSpan(text: "va_shartlariga_roziman".tr()),
         ],
       ),
     );

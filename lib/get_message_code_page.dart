@@ -168,7 +168,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
           } else if (state is RegisterSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("Kod qayta yuborildi".tr()),
+                content: Text("kod_qayta_yuborildi".tr()),
                 backgroundColor: Colors.green,
               ),
             );
@@ -184,7 +184,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Tasdiqlash kodini kiriting".tr(),
+                  "tasdiqlash_kodini_kiriting".tr(),
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -252,7 +252,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
                               'time': _formatTime(_countdown),
                             },
                           )
-                        : "Kodni qayta yuborish".tr(),
+                        : "kodni_qayta_yuborish".tr(),
                     style: TextStyle(
                       color: _countdown > 0 || isLoading
                           ? Colors.grey
@@ -268,7 +268,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
                     child: CircularProgressIndicator(color: AppColors.yellow),
                   ),
                 ElevatedButtonWidget(
-                  text: isLoading ? "Tekishirilmoqda...".tr() : "Kirish".tr(),
+                  text: isLoading ? "tekishirilmoqda".tr() : "kirish".tr(),
                   onPressed: isLoading ? null : _verifySms,
                 ),
                 Container(
@@ -283,7 +283,7 @@ class _SmsVerificationScreenState extends State<SmsVerificationScreen>
                       SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          "SMS kodi avtomatik aniqlanadi va to'ldiriladi".tr(),
+                          "sms_kodi_avtomatik_aniqlanadi_va_toldiriladi".tr(),
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.blue[800],

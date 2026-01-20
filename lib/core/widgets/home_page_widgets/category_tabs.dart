@@ -17,10 +17,10 @@ class CategoryTabs extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = [
       "barchasi".tr(),
-      'Soch Kesish'.tr(),
-      'Soch rangi'.tr(),
-      'Soqolni kesish'.tr(),
-      'Yuzni parvarish qilish'.tr(),
+      'soch_kesish'.tr(),
+      'soch_rangi'.tr(),
+      'soqolni_kesish'.tr(),
+      'yuzni_parvarish_qilish'.tr(),
     ];
 
     return SingleChildScrollView(

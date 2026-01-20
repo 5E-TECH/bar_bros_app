@@ -9,9 +9,9 @@ class ManCategoriesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GenderCategoriesScreen(
-      title: "Erkaklar uchun xizmatlar".tr(),
+      title: "erkaklar_uchun_xizmatlar".tr(),
       loadEvent: const GetAllManCategoriesEvent(),
-      emptyMessage: "Erkaklar uchun kategoriya topilmadi".tr(),
+      emptyMessage: "erkaklar_uchun_kategoriya_topilmadi".tr(),
     );
   }
 }

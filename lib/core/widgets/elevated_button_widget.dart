@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ElevatedButtonWidget extends StatelessWidget {
   const ElevatedButtonWidget({
     super.key,
-    this.text = "Kirish",
+    this.text = "kirish",
     this.onPressed,
     this.height,
     this.width,

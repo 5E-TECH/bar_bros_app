@@ -162,7 +162,7 @@ class _ReviewItemWidgetState extends State<ReviewItemWidget> {
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Javob berish funksiyasi'.tr()),
+                          content: Text('javob_berish_funksiyasi'.tr()),
                           duration: Duration(seconds: 1),
                         ),
                       );
@@ -176,7 +176,7 @@ class _ReviewItemWidgetState extends State<ReviewItemWidget> {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          'Javob berish'.tr(),
+                          'javob_berish'.tr(),
                           style: TextStyle(
                             color: subtextColor,
                             fontSize: 12.sp,
@@ -192,7 +192,7 @@ class _ReviewItemWidgetState extends State<ReviewItemWidget> {
                     onTap: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Ulashish funksiyasi'.tr()),
+                          content: Text('ulashish_funksiyasi'.tr()),
                           duration: Duration(seconds: 1),
                         ),
                       );

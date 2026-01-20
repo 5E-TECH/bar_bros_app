@@ -114,7 +114,7 @@ class _SignInPageState extends State<SignInPage> {
                       ),
                     ),
                     SizedBox(height: 22.h),
-                    Text("Telefon raqam".tr()),
+                    Text("telefon_raqam".tr()),
                     SizedBox(height: 8.h),
                     IntlPhoneField(
                       decoration: InputDecoration(
@@ -141,14 +141,14 @@ class _SignInPageState extends State<SignInPage> {
                     ),
                     SizedBox(height: 22.h),
                     ElevatedButtonWidget(
-                      text: isLoading ? "Yuklanmoqda...".tr() : "Kirish".tr(),
+                      text: isLoading ? "yuklanmoqda".tr() : "kirish".tr(),
                       onPressed: isLoading
                           ? null
                           : () {
                         if (_phoneNumber.isEmpty || _phoneNumber.length < 9) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text("To'g'ri telefon raqam kiriting".tr()),
+                              content: Text("togri_telefon_raqam_kiriting".tr()),
                               backgroundColor: Colors.orange,
                             ),
                           );

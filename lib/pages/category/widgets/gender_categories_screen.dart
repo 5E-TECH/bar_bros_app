@@ -72,7 +72,7 @@ class _GenderCategoriesView extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () =>
                           context.read<CategoryBloc>().add(loadEvent),
-                      child: Text("Qayta urinish".tr()),
+                      child: Text("qayta_urinish".tr()),
                     ),
                   ],
                 ),

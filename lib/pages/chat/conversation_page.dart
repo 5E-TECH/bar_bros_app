@@ -530,7 +530,7 @@ class _ConversationPageState extends State<ConversationPage>
                   ),
                 ),
                 child: Text(
-                  'Bugun'.tr(),
+                  'bugun'.tr(),
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 13.sp,
@@ -835,7 +835,7 @@ class _ConversationPageState extends State<ConversationPage>
     }
     return Center(
       child: Text(
-        'MEN'.tr(),
+        'men'.tr(),
         style: TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.w700,
@@ -889,7 +889,7 @@ class _ConversationPageState extends State<ConversationPage>
                           color: isDark ? Colors.white : AppColors.primaryDark,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Xabar yozing...'.tr(),
+                          hintText: 'xabar_yozing'.tr(),
                           hintStyle: TextStyle(color: Colors.grey),
                           border: InputBorder.none,
                         ),

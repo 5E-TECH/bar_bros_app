@@ -138,7 +138,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
         appBar: AppBar(
           centerTitle: true,
           title: Text(
-            "Profil".tr(),
+            "profil".tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
           ),
         ),
@@ -192,7 +192,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                 //   isDark: isDark,
                 //   icon: Icons.business,
                 //   iconColor: AppColors.yellow,
-                //   title: "StyleUp App".tr(),
+                //   title: "styleup_app".tr(),
                 //   onTap: () {
                 //     // Navigate to business app
                 //   },
@@ -202,7 +202,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                   isDark: isDark,
                   icon: Icons.phone,
                   iconColor: AppColors.yellow,
-                  title: "Aloqa".tr(),
+                  title: "aloqa".tr(),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -230,8 +230,8 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                         ),
                         title: Text(
                           state.isDark
-                              ? "Tungi rejim".tr()
-                              : "Kundizgi rejim".tr(),
+                              ? "tungi_rejim".tr()
+                              : "kundizgi_rejim".tr(),
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w500,
@@ -256,7 +256,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                   isDark: isDark,
                   icon: Icons.language,
                   iconColor: AppColors.yellow,
-                  title: "Til".tr(),
+                  title: "til".tr(),
                   onTap: () {
                     showModalBottomSheet(
                       context: context,
@@ -366,7 +366,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                   isDark: isDark,
                   icon: Icons.share,
                   iconColor: AppColors.yellow,
-                  title: "Ilovani ulashish".tr(),
+                  title: "ilovani_ulashish".tr(),
                   onTap: _shareApp, // Call the share function here
                 ),
 
@@ -387,7 +387,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                 SizedBox(height: 35.h,),
 
                 // Logout Button
-                const LogoutButtonWidget(text: "Akkountdan chiqish"),
+                const LogoutButtonWidget(text: "akkountdan_chiqish"),
               ],
             ),
           ),

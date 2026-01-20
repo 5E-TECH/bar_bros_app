@@ -309,7 +309,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                 // First Name Field
                 Text(
-                  "Ism".tr(),
+                  "ism".tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -331,10 +331,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return "Ism bo'sh bo'lmasligi kerak".tr();
+                      return "ism_bosh_bolmasligi_kerak".tr();
                     }
                     if (value.trim().length < 2) {
-                      return "Ism juda qisqa".tr();
+                      return "ism_juda_qisqa".tr();
                     }
                     return null;
                   },
@@ -344,7 +344,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                 // Last Name Field
                 Text(
-                  "Familiya".tr(),
+                  "familiya".tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -366,10 +366,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return "Familiya bo'sh bo'lmasligi kerak".tr();
+                      return "familiya_bosh_bolmasligi_kerak".tr();
                     }
                     if (value.trim().length < 2) {
-                      return "Familiya juda qisqa".tr();
+                      return "familiya_juda_qisqa".tr();
                     }
                     return null;
                   },
@@ -532,7 +532,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                 // Phone Number Field (Read-only)
                 Text(
-                  "Telefon raqam".tr(),
+                  "telefon_raqam".tr(),
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
@@ -573,7 +573,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       ),
                     ),
                     child: Text(
-                      "Saqlash".tr(),
+                      "saqlash".tr(),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,

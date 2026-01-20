@@ -324,7 +324,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                                         children: isToday
                                             ? [
                                                 Text(
-                                                  'Bugun'.tr(),
+                                                  'bugun'.tr(),
                                                   style: TextStyle(
                                                     color: isSelected
                                                         ? Colors.white
@@ -458,7 +458,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                     ],
                     SizedBox(height: 16.h),
                     Text(
-                      "To'lov turini tanlang".tr(),
+                      "tolov_turini_tanlang".tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -590,7 +590,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                     ),
                     SizedBox(height: 20.h),
                     ElevatedButtonWidget(
-                      text: "Bron qilish".tr(),
+                      text: "bron_qilish".tr(),
                       onPressed:
                           (selectedTime != null && selectedPayment != null)
                           ? () {
@@ -987,7 +987,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                                   ),
                                   child: Text(
                                     _isActive(widget.barbershop.status)
-                                        ? 'Open'.tr()
+                                        ? 'open'.tr()
                                         : 'Yopiq'.tr(),
                                     style: TextStyle(
                                       color: _isActive(widget.barbershop.status)
@@ -1105,8 +1105,8 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                             fontWeight: FontWeight.bold,
                           ),
                           tabs: [
-                            Tab(text: 'Jadval'.tr()),
-                            Tab(text: 'Barbers'.tr()),
+                            Tab(text: 'jadval'.tr()),
+                            Tab(text: 'barbers'.tr()),
                           ],
                         ),
                       ),
@@ -1382,7 +1382,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
           if (mastersList.isEmpty) {
             return Center(
               child: Text(
-                'Sartaroshlar topilmadi!'.tr(),
+                'sartaroshlar_topilmadi'.tr(),
                 style: TextStyle(color: subtextColor, fontSize: 14.sp),
               ),
             );
@@ -1474,7 +1474,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
               children: isToday
                   ? [
                       Text(
-                        'Bugun'.tr(),
+                        'bugun'.tr(),
                         style: TextStyle(
                           color: isSelected ? Colors.white : textColor,
                           fontSize: 14.sp,
@@ -1675,7 +1675,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                         GestureDetector(
                           onTap: () {},
                           child: Text(
-                            'More →'.tr(),
+                            'more'.tr(),
                             style: TextStyle(
                               color: AppColors.yellow,
                               fontSize: 8.sp,

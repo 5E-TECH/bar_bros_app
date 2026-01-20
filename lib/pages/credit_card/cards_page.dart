@@ -108,7 +108,7 @@ class _CardsPageState extends State<CardsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text("Bekor qilish".tr()),
+            child: Text("bekor_qilish".tr()),
           ),
           TextButton(
             onPressed: () {
@@ -147,7 +147,7 @@ class _CardsPageState extends State<CardsPage> {
           IconButton.outlined(
             onPressed: () => _openAddCard(),
             icon: const Icon(Icons.add),
-            tooltip: "Karta qo'shish".tr(),
+            tooltip: "karta_qoshish".tr(),
           ),
           SizedBox(width: 16.w),
         ],

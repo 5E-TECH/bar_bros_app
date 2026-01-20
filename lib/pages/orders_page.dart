@@ -13,7 +13,7 @@ class _OrdersPageState extends State<OrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("Orders".tr()),
+        child: Text("orders".tr()),
       ),
     );
   }

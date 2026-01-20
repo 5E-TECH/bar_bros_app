@@ -157,7 +157,7 @@ class MasterItemWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
-                    'Tanlash'.tr(),
+                    'tanlash'.tr(),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 14.sp,

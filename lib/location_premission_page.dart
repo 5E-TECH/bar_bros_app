@@ -32,8 +32,8 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         _showErrorDialog(
-          "Joylashuv o‘chirilgan".tr(),
-          "Telefoningizda joylashuv xizmati yoqilmagan. Iltimos, sozlamalardan yoqing."
+          "joylashuv_ochirilgan_2".tr(),
+          "telefoningizda_joylashuv_xizmati_yoqilmagan_iltimos_sozlamalardan_yoqing"
               .tr(),
           onConfirm: () => Geolocator.openLocationSettings(),
         );
@@ -48,8 +48,8 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
 
       if (permission == LocationPermission.denied) {
         _showErrorDialog(
-          "Ruxsat berilmadi".tr(),
-          "Yaqin atrofdagi sartaroshxonalarni ko‘rish uchun joylashuvga ruxsat bering."
+          "ruxsat_berilmadi".tr(),
+          "yaqin_atrofdagi_sartaroshxonalarni_korish_uchun_joylashuvga_ruxsat_bering"
               .tr(),
         );
         return;
@@ -57,8 +57,8 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
 
       if (permission == LocationPermission.deniedForever) {
         _showErrorDialog(
-          "Ruxsat butunlay rad etildi".tr(),
-          "Ilova ishlay olmaydi. Iltimos, telefon sozlamalaridan BarBros ilovasiga joylashuv ruxsatini bering."
+          "ruxsat_butunlay_rad_etildi".tr(),
+          "ilova_ishlay_olmaydi_iltimos_telefon_sozlamalaridan_barbros_ilovasiga_joylashuv_ruxsatini_bering"
               .tr(),
           onConfirm: () => Geolocator.openAppSettings(),
         );
@@ -79,8 +79,8 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
       }
     } catch (e) {
       _showErrorDialog(
-        "Xatolik".tr(),
-        "Joylashuvni aniqlashda xato yuz berdi.".tr(),
+        "xatolik".tr(),
+        "joylashuvni_aniqlashda_xato_yuz_berdi".tr(),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -107,11 +107,11 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                 Navigator.pop(context);
                 onConfirm();
               },
-              child: Text("Sozlamalarga o‘tish".tr()),
+              child: Text("sozlamalarga_otish_2".tr()),
             ),
           TextButton(
             onPressed: () => _requestLocationPermission(),
-            child: Text("Qayta urinish".tr()),
+            child: Text("qayta_urinish".tr()),
           ),
         ],
       ),
@@ -129,7 +129,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                    CircularProgressIndicator(color: AppColors.yellow),
                    SizedBox(height: 20.h),
                   Text(
-                    "Joylashuv aniqlanmoqda...".tr(),
+                    "joylashuv_aniqlanmoqda".tr(),
                     style: TextStyle(fontSize: 16.sp),
                   ),
                 ],
@@ -140,7 +140,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                   Icon(Icons.location_on, size: 100, color: AppColors.yellow),
                   const SizedBox(height: 30),
                   Text(
-                    "Joylashuvga ruxsat bering".tr(),
+                    "joylashuvga_ruxsat_bering".tr(),
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
@@ -150,7 +150,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     child: Text(
-                      "Yaqin atrofdagi eng yaxshi sartaroshxonalarni topish uchun sizning joylashuvingiz kerak."
+                      "yaqin_atrofdagi_eng_yaxshi_sartaroshxonalarni_topish_uchun_sizning_joylashuvingiz_kerak"
                           .tr(),
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -172,7 +172,7 @@ class _LocationPermissionPageState extends State<LocationPermissionPage> {
                       ),
                     ),
                     child: Text(
-                      "Ruxsat berish".tr(),
+                      "ruxsat_berish".tr(),
                       style: TextStyle(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.bold,

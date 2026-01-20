@@ -236,7 +236,7 @@ class _BarbersPageState extends State<BarbersPage> {
                       ),
                     ),
                     Text(
-                      "Ratingni tanlang".tr(),
+                      "ratingni_tanlang".tr(),
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
@@ -387,7 +387,7 @@ class _BarbersPageState extends State<BarbersPage> {
                               : AppColors.primaryLight,
                           controller: _searchController,
                           prefixIcon: Icon(Icons.search),
-                          hint: "Sartaroshlarni qidirish".tr(),
+                          hint: "sartaroshlarni_qidirish".tr(),
                           enabled: true,
                         ),
                       ),
@@ -436,7 +436,7 @@ class _BarbersPageState extends State<BarbersPage> {
                         if (items.isEmpty) {
                           return Center(
                             child: Text(
-                              "Sartaroshlar topilmadi!".tr(),
+                              "sartaroshlar_topilmadi".tr(),
                               style: TextStyle(fontSize: 18.sp),
                             ),
                           );
@@ -462,7 +462,7 @@ class _BarbersPageState extends State<BarbersPage> {
                         return results.isEmpty
                             ? Center(
                                 child: Text(
-                                  "Sartaroshlar topilmadi!".tr(),
+                                  "sartaroshlar_topilmadi".tr(),
                                   style: TextStyle(fontSize: 18.sp),
                                 ),
                               )

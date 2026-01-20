@@ -20,10 +20,10 @@ class _AdvancedCurvedBottomNavState extends State<AdvancedCurvedBottomNav> {
   late final PageController _pageController;
 
   List<NavBarItem> get _items => [
-    NavBarItem(iconPath: "assets/svgs/home.svg", label: "Uy".tr()),
-    NavBarItem(iconPath: "assets/svgs/orders.svg", label: "Buyurtma".tr()),
-    NavBarItem(iconPath: "assets/svgs/chat.svg", label: "Chat".tr()),
-    NavBarItem(iconPath: "assets/svgs/profile.svg", label: "Profile".tr()),
+    NavBarItem(iconPath: "assets/svgs/home.svg", label: "uy".tr()),
+    NavBarItem(iconPath: "assets/svgs/orders.svg", label: "buyurtma".tr()),
+    NavBarItem(iconPath: "assets/svgs/chat.svg", label: "chat".tr()),
+    NavBarItem(iconPath: "assets/svgs/profile.svg", label: "profile".tr()),
   ];
 
   void _onItemTapped(int index) {

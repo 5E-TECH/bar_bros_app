@@ -47,7 +47,7 @@ class _WriteNamePageState extends State<WriteNamePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Row(children: [Text("Ismingizni Kiriting".tr())]),
+                Row(children: [Text("ismingizni_kiriting".tr())]),
                 TextFieldWidget(
                   controller: _nameController,
                   enabled: !isLoading,
@@ -59,7 +59,7 @@ class _WriteNamePageState extends State<WriteNamePage> {
                     child: CircularProgressIndicator(),
                   ),
                 ElevatedButtonWidget(
-                  text: isLoading ? "Saqlanmoqda...".tr() : "Saqlash".tr(),
+                  text: isLoading ? "saqlanmoqda".tr() : "saqlash".tr(),
                   onPressed: isLoading
                       ? null
                       : () {
@@ -67,7 +67,7 @@ class _WriteNamePageState extends State<WriteNamePage> {
                           if (name.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text("Ismingizni Kiriting".tr()),
+                                content: Text("ismingizni_kiriting".tr()),
                                 backgroundColor: Colors.orange,
                               ),
                             );
