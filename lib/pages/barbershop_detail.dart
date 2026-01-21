@@ -2,6 +2,7 @@ import 'package:bar_bros_user/core/constants/api_constants.dart';
 import 'package:bar_bros_user/core/di/ingector.dart';
 import 'package:bar_bros_user/core/theme/app_colors.dart';
 import 'package:bar_bros_user/core/widgets/elevated_button_widget.dart';
+import 'package:bar_bros_user/features/barbers_by_shop_service/domain/entities/barber_by_shop_service.dart';
 import 'package:bar_bros_user/features/barbers_by_shop_service/domain/entities/barbers_by_shop_service_query.dart';
 import 'package:bar_bros_user/features/barbers_by_shop_service/presentation/bloc/barbers_by_shop_service_bloc.dart';
 import 'package:bar_bros_user/features/barbers_by_shop_service/presentation/bloc/barbers_by_shop_service_event.dart';
@@ -18,6 +19,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BarbershopDetailPage extends StatefulWidget {
   final Barbershop barbershop;
@@ -45,6 +47,8 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
   bool _isAvailabilityLoading = false;
   List<Master> _currentBarbers = [];
   bool _isBookingSheetOpen = false;
+  double? _shopLatitude;
+  double? _shopLongitude;
 
   // Date and time selection
   DateTime selectedDate = DateTime.now();
@@ -94,6 +98,103 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
     return masters.where((master) {
       return master.availableTimeSlots.contains(selectedTimeSlot);
     }).toList();
+  }
+
+  bool get _hasShopLocation =>
+      _shopLatitude != null && _shopLongitude != null;
+
+  void _setShopLocationFromBarbers(List<BarberByShopService> barbers) {
+    if (barbers.isEmpty || _hasShopLocation) return;
+    final shop = barbers.first.barberShop;
+    if (shop.latitude == 0 && shop.longitude == 0) return;
+    setState(() {
+      _shopLatitude = shop.latitude;
+      _shopLongitude = shop.longitude;
+    });
+  }
+
+  Future<void> _openMapPicker() async {
+    if (!_hasShopLocation) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: const Icon(Icons.map),
+                title: Text('Open in Google Maps'.tr()),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _openGoogleMaps();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.map_outlined),
+                title: Text('Open in Yandex Maps'.tr()),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _openYandexMaps();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _openGoogleMaps() async {
+    final lat = _shopLatitude;
+    final lng = _shopLongitude;
+    if (lat == null || lng == null) return;
+    final candidates = <Uri>[
+      Uri.parse('google.navigation:q=$lat,$lng&mode=d'),
+      Uri.parse(
+        'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving',
+      ),
+    ];
+    await _launchFirstAvailable(candidates);
+  }
+
+  Future<void> _openYandexMaps() async {
+    final lat = _shopLatitude;
+    final lng = _shopLongitude;
+    if (lat == null || lng == null) return;
+    final candidates = <Uri>[
+      Uri.parse('yandexnavi://build_route_on_map?lat_to=$lat&lon_to=$lng'),
+      Uri.parse('yandexmaps://maps.yandex.com/?pt=$lng,$lat&z=16&l=map'),
+      Uri.parse('https://yandex.com/maps/?rtext=~$lat,$lng&rtt=auto'),
+    ];
+    await _launchFirstAvailable(candidates);
+  }
+
+  Future<void> _launchFirstAvailable(List<Uri> candidates) async {
+    for (final uri in candidates) {
+      try {
+        final launched = await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+        if (launched) {
+          return;
+        }
+      } catch (_) {
+        // Try next candidate
+      }
+    }
+    _showMapLaunchError();
+  }
+
+  void _showMapLaunchError() {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Could not open maps app.'.tr()),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   void _showBookingSheet(Master master, bool isDark) {
@@ -824,6 +925,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
               BlocListener<BarbersByShopServiceBloc, BarbersByShopServiceState>(
                 listener: (context, state) {
                   if (state is BarbersByShopServiceLoaded) {
+                    _setShopLocationFromBarbers(state.barbers);
                     final mastersList = state.barbers.map((barber) {
                       final nameParts = barber.fullName.trim().split(RegExp(r'\s+'));
                       final name = nameParts.isNotEmpty ? nameParts.first : '';
@@ -1080,6 +1182,48 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                                 style: TextStyle(
                                   color: subtextColor,
                                   fontSize: 14.sp,
+                                ),
+                              ),
+                            ],
+                            if (_hasShopLocation) ...[
+                              SizedBox(height: 12.h),
+                              GestureDetector(
+                                onTap: _openMapPicker,
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 10.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? AppColors.containerDark
+                                        : Colors.grey.withValues(alpha: 0.08),
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.map,
+                                        color: subtextColor,
+                                        size: 18.sp,
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Expanded(
+                                        child: Text(
+                                          'Open in maps'.tr(),
+                                          style: TextStyle(
+                                            color: subtextColor,
+                                            fontSize: 14.sp,
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.chevron_right,
+                                        color: subtextColor,
+                                        size: 18.sp,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
