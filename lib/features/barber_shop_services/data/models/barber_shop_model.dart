@@ -38,7 +38,7 @@ class BarberShopModel extends BarberShop {
       latitude: _asDouble(json['latitude']),
       longitude: _asDouble(json['longitude']),
       img: json['img'] as String? ?? '',
-      description: json['descripton'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       phoneNumber: phoneValue == null ? '' : phoneValue.toString(),
       username: json['username'] as String?,
       role: json['role'] as String?,

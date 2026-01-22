@@ -22,7 +22,7 @@ class BarberShopBriefModel extends BarberShopBrief {
       latitude: _asDouble(json['latitude']),
       longitude: _asDouble(json['longitude']),
       img: json['img'] as String? ?? '',
-      description: json['descripton'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       phoneNumber: json['phoneNumber'] as String? ?? '',
       status: json['status'] as String? ?? '',
       avgRating: json['avg_rating']?.toString() ?? '0',
