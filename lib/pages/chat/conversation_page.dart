@@ -48,7 +48,7 @@ class _ConversationPageState extends State<ConversationPage>
   bool _isSending = false;
   bool _showEmojiPicker = false;
   final ImagePicker _imagePicker = ImagePicker();
-  String? _selectedImagePath;
+  final List<String> _selectedImagePaths = [];
   bool _isAppInForeground = true;
   int _consecutiveEmptyPolls = 0;
   static const int _maxEmptyPollsBeforeSlowdown = 5;
@@ -246,7 +246,7 @@ class _ConversationPageState extends State<ConversationPage>
 
   Future<void> _sendMessage() async {
     final text = _messageController.text.trim();
-    if (text.isEmpty && _selectedImagePath == null) return;
+    if (text.isEmpty && _selectedImagePaths.isEmpty) return;
     if (_isSending) return;
     if (_userId == null || widget.barberId.isEmpty) return;
 
@@ -258,7 +258,7 @@ class _ConversationPageState extends State<ConversationPage>
     final result = await repository.sendMessage(
       message: text,
       barberId: widget.barberId,
-      imagePath: _selectedImagePath,
+      imagePaths: _selectedImagePaths,
     );
 
     if (!mounted) return;
@@ -276,49 +276,12 @@ class _ConversationPageState extends State<ConversationPage>
           (_) {
         _messageController.clear();
         setState(() {
-          _selectedImagePath = null;
+          _selectedImagePaths.clear();
         });
         _consecutiveEmptyPolls = 0;
         _pollOnce();
       },
     );
-  }
-
-  Future<void> _sendImageMessages(List<String> paths) async {
-    if (paths.isEmpty || _isSending) return;
-    if (_userId == null || widget.barberId.isEmpty) return;
-
-    final text = _messageController.text.trim();
-    setState(() {
-      _isSending = true;
-    });
-
-    final repository = getIt<ChatRepository>();
-    for (var i = 0; i < paths.length; i++) {
-      final message = i == 0 ? text : '';
-      final result = await repository.sendMessage(
-        message: message,
-        barberId: widget.barberId,
-        imagePath: paths[i],
-      );
-      if (!mounted) return;
-      result.fold(
-        (failure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(failure.message)),
-          );
-        },
-        (_) {},
-      );
-    }
-
-    if (!mounted) return;
-    setState(() {
-      _isSending = false;
-    });
-    _messageController.clear();
-    _consecutiveEmptyPolls = 0;
-    _pollOnce();
   }
 
   @override
@@ -330,7 +293,7 @@ class _ConversationPageState extends State<ConversationPage>
           children: [
             _buildHeader(isDark),
             Expanded(child: _buildMessageList(isDark)),
-            if (_selectedImagePath != null) _buildImagePreview(isDark),
+            if (_selectedImagePaths.isNotEmpty) _buildImagePreview(isDark),
             _buildInputArea(isDark),
             if (_showEmojiPicker) _buildEmojiPicker(isDark),
           ],
@@ -416,52 +379,62 @@ class _ConversationPageState extends State<ConversationPage>
           ),
         ),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
-                child: Image.file(
-                  File(_selectedImagePath!),
-                  width: 80.w,
-                  height: 80.w,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Positioned(
-                top: 4.h,
-                right: 4.w,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedImagePath = null;
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      shape: BoxShape.circle,
+          SizedBox(
+            height: 86.h,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: _selectedImagePaths.length,
+              separatorBuilder: (_, __) => SizedBox(width: 10.w),
+              itemBuilder: (context, index) {
+                final path = _selectedImagePaths[index];
+                return Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Image.file(
+                        File(path),
+                        width: 80.w,
+                        height: 80.w,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    child: Icon(
-                      Icons.close,
-                      color: Colors.white,
-                      size: 16.sp,
+                    Positioned(
+                      top: 4.h,
+                      right: 4.w,
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedImagePaths.removeAt(index);
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(4.w),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
+                            size: 16.sp,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            ],
+                  ],
+                );
+              },
+            ),
           ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Text(
-              'Rasm tanlandi'.tr(),
-              style: TextStyle(
-                color: isDark ? Colors.white : AppColors.primaryDark,
-                fontSize: 14.sp,
-              ),
+          SizedBox(height: 8.h),
+          Text(
+            'Rasm tanlandi'.tr(),
+            style: TextStyle(
+              color: isDark ? Colors.white : AppColors.primaryDark,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -618,16 +591,85 @@ class _ConversationPageState extends State<ConversationPage>
     );
   }
 
+  Widget _buildMessageImages(List<String> urls) {
+    final isSingle = urls.length == 1;
+    final columns = isSingle ? 1 : 2;
+    final imageSize = isSingle ? 200.w : 110.w;
+    final rows = (urls.length / columns).ceil();
+    final gridWidth =
+        imageSize * columns + (columns - 1) * 8.w;
+    final gridHeight = imageSize * rows + (rows - 1) * 8.h;
+
+    return SizedBox(
+      width: gridWidth,
+      height: gridHeight,
+      child: GridView.builder(
+        itemCount: urls.length,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: columns,
+          crossAxisSpacing: 8.w,
+          mainAxisSpacing: 8.h,
+        ),
+        itemBuilder: (context, index) {
+          final url = urls[index];
+          return GestureDetector(
+            onTap: () => _openFullScreenImage(url),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(14.r),
+              child: Image.network(
+                url,
+                width: imageSize,
+                height: imageSize,
+                fit: BoxFit.cover,
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Container(
+                    width: imageSize,
+                    height: imageSize,
+                    color: Colors.grey.withValues(alpha: 0.2),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null,
+                        color: AppColors.yellow,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (_, __, ___) => Container(
+                  width: imageSize,
+                  height: imageSize,
+                  color: Colors.black.withValues(alpha: 0.2),
+                  child: Icon(
+                    Icons.broken_image_outlined,
+                    color: Colors.white.withValues(alpha: 0.7),
+                    size: 48.sp,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   Widget _buildMessageBubble(ChatMessage message, int index, bool isDark) {
     final isSent = _isSent(message);
     final delay = index * 50;
-    final imageUrl = message.imageUrl;
-    final resolvedImageUrl = imageUrl.isEmpty
-        ? ''
-        : (imageUrl.startsWith('http')
-        ? imageUrl
-        : '${Constants.imageBaseUrl}$imageUrl');
-    final hasImage = resolvedImageUrl.isNotEmpty;
+    final resolvedImageUrls = message.imageUrls
+        .map((url) => url.isEmpty
+            ? ''
+            : (url.startsWith('http')
+                ? url
+                : '${Constants.imageBaseUrl}$url'))
+        .where((url) => url.isNotEmpty)
+        .toList();
+    final hasImage = resolvedImageUrls.isNotEmpty;
 
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 300 + delay),
@@ -719,47 +761,7 @@ class _ConversationPageState extends State<ConversationPage>
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (hasImage) ...[
-                          GestureDetector(
-                            onTap: () => _openFullScreenImage(resolvedImageUrl),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(14.r),
-                              child: Image.network(
-                                resolvedImageUrl,
-                                width: 200.w,
-                                height: 200.h,
-                                fit: BoxFit.cover,
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return Container(
-                                    width: 200.w,
-                                    height: 200.h,
-                                    color: Colors.grey.withValues(alpha: 0.2),
-                                    child: Center(
-                                      child: CircularProgressIndicator(
-                                        value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                            ? loadingProgress
-                                            .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                            : null,
-                                        color: AppColors.yellow,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                errorBuilder: (_, __, ___) => Container(
-                                  width: 200.w,
-                                  height: 200.h,
-                                  color: Colors.black.withValues(alpha: 0.2),
-                                  child: Icon(
-                                    Icons.broken_image_outlined,
-                                    color: Colors.white.withValues(alpha: 0.7),
-                                    size: 48.sp,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          _buildMessageImages(resolvedImageUrls),
                         ],
                         if (message.message.isNotEmpty) ...[
                           if (hasImage) SizedBox(height: 8.h),
@@ -885,6 +887,10 @@ class _ConversationPageState extends State<ConversationPage>
                       child: TextField(
                         focusNode: _messageFocusNode,
                         controller: _messageController,
+                        minLines: 1,
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        textInputAction: TextInputAction.newline,
                         style: TextStyle(
                           color: isDark ? Colors.white : AppColors.primaryDark,
                         ),
@@ -984,7 +990,7 @@ class _ConversationPageState extends State<ConversationPage>
       builder: (context) {
         return SafeArea(
           child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20.h),
+            padding: EdgeInsets.symmetric(vertical: 20.h, horizontal: 16.w),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -997,54 +1003,32 @@ class _ConversationPageState extends State<ConversationPage>
                     borderRadius: BorderRadius.circular(6.r),
                   ),
                 ),
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(10.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.yellow.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12.r),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildSourceOption(
+                        isDark: isDark,
+                        icon: Icons.photo_library,
+                        label: 'Galereyadan'.tr(),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _pickMultipleImages();
+                        },
+                      ),
                     ),
-                    child: Icon(
-                      Icons.photo_library,
-                      color: AppColors.yellow,
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: _buildSourceOption(
+                        isDark: isDark,
+                        icon: Icons.photo_camera,
+                        label: 'Kameradan'.tr(),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _pickSingleImage(ImageSource.camera);
+                        },
+                      ),
                     ),
-                  ),
-                  title: Text(
-                    'Galereyadan'.tr(),
-                    style: TextStyle(
-                      color: isDark ? Colors.white : AppColors.primaryDark,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickMultipleImages();
-                  },
-                ),
-                SizedBox(height: 8.h),
-                ListTile(
-                  leading: Container(
-                    padding: EdgeInsets.all(10.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.yellow.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Icon(
-                      Icons.photo_camera,
-                      color: AppColors.yellow,
-                    ),
-                  ),
-                  title: Text(
-                    'Kameradan'.tr(),
-                    style: TextStyle(
-                      color: isDark ? Colors.white : AppColors.primaryDark,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickSingleImage(ImageSource.camera);
-                  },
+                  ],
                 ),
               ],
             ),
@@ -1054,20 +1038,76 @@ class _ConversationPageState extends State<ConversationPage>
     );
   }
 
+  Widget _buildSourceOption({
+    required bool isDark,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16.r),
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.backgroundDark : AppColors.containerLight,
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.06)
+                  : Colors.grey.withValues(alpha: 0.15),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.all(10.w),
+                decoration: BoxDecoration(
+                  color: AppColors.yellow.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Icon(icon, color: AppColors.yellow),
+              ),
+              SizedBox(height: 10.h),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isDark ? Colors.white : AppColors.primaryDark,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _pickSingleImage(ImageSource source) async {
     final image =
         await _imagePicker.pickImage(source: source, imageQuality: 80);
     if (!mounted || image == null) return;
     setState(() {
-      _selectedImagePath = image.path;
+      if (!_selectedImagePaths.contains(image.path)) {
+        _selectedImagePaths.add(image.path);
+      }
     });
   }
 
   Future<void> _pickMultipleImages() async {
     final images = await _imagePicker.pickMultiImage(imageQuality: 80);
     if (!mounted || images.isEmpty) return;
-    final paths = images.map((item) => item.path).toList();
-    await _sendImageMessages(paths);
+    setState(() {
+      for (final image in images) {
+        if (!_selectedImagePaths.contains(image.path)) {
+          _selectedImagePaths.add(image.path);
+        }
+      }
+    });
   }
 
   Widget _buildEmojiPicker(bool isDark) {

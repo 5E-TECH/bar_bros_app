@@ -19,6 +19,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:ui' as ui;
 import 'package:url_launcher/url_launcher.dart';
 
 class BarbershopDetailPage extends StatefulWidget {
@@ -63,42 +65,6 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
   }
 
 
-  final List<Master> masters = [
-    Master(
-      name: 'Mirshakar',
-      surname: 'Ahror',
-      rating: 4.5,
-      reviewCount: 120,
-      imageUrl: 'assets/images/master1.jpg',
-      yearsExperience: 3,
-      availableTimeSlots: ['12:00', '13:00', '15:00'],
-    ),
-    Master(
-      name: 'Abdullayev',
-      surname: 'Jasur',
-      rating: 4.9,
-      reviewCount: 95,
-      imageUrl: 'assets/images/master2.jpg',
-      yearsExperience: 5,
-      availableTimeSlots: ['12:00', '13:00', '14:00', '15:00'],
-    ),
-    Master(
-      name: 'Yaxshimuratov',
-      surname: 'Yaxshimurod',
-      rating: 4.8,
-      reviewCount: 150,
-      imageUrl: 'assets/images/master3.jpg',
-      yearsExperience: 4,
-      availableTimeSlots: ['13:00', '14:00', '16:00', '17:00'],
-    ),
-  ];
-
-  List<Master> get filteredMasters {
-    if (selectedTimeSlot == null) return masters;
-    return masters.where((master) {
-      return master.availableTimeSlots.contains(selectedTimeSlot);
-    }).toList();
-  }
 
   bool get _hasShopLocation =>
       _shopLatitude != null && _shopLongitude != null;
@@ -115,30 +81,68 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
 
   Future<void> _openMapPicker() async {
     if (!_hasShopLocation) return;
+    final isDark = context.read<ThemeBloc>().state.isDark;
     await showModalBottomSheet<void>(
       context: context,
+      backgroundColor: isDark ? AppColors.backgroundDark : Colors.white,
+      barrierColor: Colors.black.withValues(alpha: 0.5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
       builder: (context) {
         return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.map),
-                title: Text('Open in Google Maps'.tr()),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _openGoogleMaps();
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.map_outlined),
-                title: Text('Open in Yandex Maps'.tr()),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  _openYandexMaps();
-                },
-              ),
-            ],
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40.w,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(6.r),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+                Text(
+                  'Xaritani tanlang'.tr(),
+                  style: TextStyle(
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _MapChoiceButton(
+                        assetPath: 'assets/images/google.png',
+                        label: 'Google Maps',
+                        isDark: isDark,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _openGoogleMaps();
+                        },
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: _MapChoiceButton(
+                        assetPath: 'assets/images/yandex.png',
+                        label: 'Yandex Maps',
+                        isDark: isDark,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          _openYandexMaps();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -197,6 +201,89 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
     );
   }
 
+  bool _isTextOverflow(
+    String text,
+    TextStyle style,
+    double maxWidth,
+    int maxLines,
+    ui.TextDirection textDirection,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: maxLines,
+      textDirection: textDirection,
+    )..layout(maxWidth: maxWidth);
+    return painter.didExceedMaxLines;
+  }
+
+  Future<void> _showBookingSuccessOverlay() async {
+    if (!mounted) return;
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierLabel: 'booking_success',
+      barrierColor: Colors.black.withValues(alpha: 0.1),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (context, _, __) => const SizedBox.shrink(),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutBack,
+        );
+        return Opacity(
+          opacity: animation.value,
+          child: ScaleTransition(
+            scale: curved,
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
+                margin: EdgeInsets.symmetric(horizontal: 32.w),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18.r),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 56.w,
+                      height: 56.w,
+                      decoration: BoxDecoration(
+                        color: AppColors.yellow,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.check_rounded,
+                        color: AppColors.primaryLight,
+                        size: 32.sp,
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(
+                      "Buyurtma muvaffaqiyatli yaratildi!",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.none,
+                        decorationColor: Colors.transparent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    await Future.delayed(const Duration(seconds: 2));
+    if (mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
+
   void _showBookingSheet(Master master, bool isDark) {
     _isBookingSheetOpen = true;
     showModalBottomSheet(
@@ -214,13 +301,14 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
         List<TimeSlot> _slotsForDate(DateTime date) {
           final availability = _availabilityForBarberDate(master.id, date);
           if (availability == null) return <TimeSlot>[];
-          final filteredSlots = _filterSlotsByBusinessHours(
-            _filterToThirtyMinuteSlots(availability.freeSlots),
+          final filteredSlots = _filterExpiredSlots(
+            date,
+            _filterSlotsByBusinessHours(
+              _filterToThirtyMinuteSlots(availability.freeSlots),
+            ),
           );
           return filteredSlots.map(_toTimeSlot).toList();
         }
-
-        _loadAvailabilityForBarbers([master], sheetSelectedDate);
 
         var availableSlots = _slotsForDate(sheetSelectedDate);
         String? selectedTime = selectedTimeSlot;
@@ -229,8 +317,17 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
             !availableSlots.any((slot) => slot.startTime == selectedTime)) {
           selectedTime = null;
         }
+        bool isBioExpanded = false;
+        bool hasRequestedAvailability = false;
         return StatefulBuilder(
           builder: (context, setModalState) {
+            if (!hasRequestedAvailability) {
+              hasRequestedAvailability = true;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted) return;
+                _loadAvailabilityForBarbers([master], sheetSelectedDate);
+              });
+            }
             availableSlots = _slotsForDate(sheetSelectedDate);
             return SafeArea(
               top: false,
@@ -254,30 +351,53 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          width: 56.w,
-                          height: 56.w,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey[800],
-                            image: master.imageUrl.isEmpty
-                                ? null
-                                : DecorationImage(
-                                    image: master.imageUrl.startsWith('http')
-                                        ? NetworkImage(master.imageUrl)
-                                        : AssetImage(master.imageUrl)
-                                            as ImageProvider,
-                                    fit: BoxFit.cover,
-                                    onError: (exception, stackTrace) {},
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: AppColors.yellow,
+                                  size: 16.sp,
+                                ),
+                                SizedBox(width: 4.w),
+                                Text(
+                                  master.rating.toStringAsFixed(1),
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.black,
+                                    fontSize: 12.sp,
+                                    fontWeight: FontWeight.w600,
                                   ),
-                          ),
-                          child: master.imageUrl.isEmpty
-                              ? Icon(
-                                  Icons.person,
-                                  color: Colors.grey[600],
-                                  size: 28.sp,
-                                )
-                              : null,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 6.h),
+                            Container(
+                              width: 56.w,
+                              height: 56.w,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey[800],
+                                image: master.imageUrl.isEmpty
+                                    ? null
+                                    : DecorationImage(
+                                        image: master.imageUrl.startsWith('http')
+                                            ? NetworkImage(master.imageUrl)
+                                            : AssetImage(master.imageUrl)
+                                                as ImageProvider,
+                                        fit: BoxFit.cover,
+                                        onError: (exception, stackTrace) {},
+                                      ),
+                              ),
+                              child: master.imageUrl.isEmpty
+                                  ? Icon(
+                                      Icons.person,
+                                      color: Colors.grey[600],
+                                      size: 28.sp,
+                                    )
+                                  : null,
+                            ),
+                          ],
                         ),
                         SizedBox(width: 12.w),
                         Expanded(
@@ -295,25 +415,12 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                                     ),
                                   ),
                                   Spacer(),
-                                  Icon(
-                                    Icons.star,
-                                    color: AppColors.yellow,
-                                    size: 16.sp,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  Text(
-                                    master.rating.toStringAsFixed(1),
-                                    style: TextStyle(
-                                      color:
-                                          isDark ? Colors.white : Colors.black,
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
+
                                 ],
                               ),
                               SizedBox(height: 4.h),
                               Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Icon(
                                     Icons.phone,
@@ -334,18 +441,115 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      onTap: () {
+                                        if (master.id.isEmpty) return;
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ConversationPage(
+                                              barberId: master.id,
+                                              barberName:
+                                                  '${master.name} ${master.surname}',
+                                              barberImageUrl: master.imageUrl,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: isDark
+                                              ? AppColors.containerDark
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(16.r),
+                                          border: Border.all(
+                                            color: isDark
+                                                ? Colors.white24
+                                                : Colors.black12,
+                                          ),
+                                          boxShadow: [
+                                            if (!isDark)
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withValues(alpha: 0.08),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 3),
+                                              ),
+                                          ],
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: SvgPicture.asset(
+                                            'assets/svgs/message.svg',
+                                            width: 28.sp,
+                                            height: 28.sp,
+                                            fit: BoxFit.contain,
+                                            colorFilter: ColorFilter.mode(
+                                              AppColors.yellow,
+                                              BlendMode.srcIn,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                               if (master.bio.isNotEmpty) ...[
                                 SizedBox(height: 6.h),
-                                Text(
-                                  master.bio,
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12.sp,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final bioStyle = TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 12.sp,
+                                    );
+                                    final isOverflow = _isTextOverflow(
+                                      master.bio,
+                                      bioStyle,
+                                      constraints.maxWidth,
+                                      2,
+                                      Directionality.of(context),
+                                    );
+                                    return Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          master.bio,
+                                          style: bioStyle,
+                                          maxLines: isBioExpanded ? null : 2,
+                                          overflow: isBioExpanded
+                                              ? TextOverflow.visible
+                                              : TextOverflow.ellipsis,
+                                        ),
+                                        if (isOverflow && !isBioExpanded)
+                                          GestureDetector(
+                                            onTap: () {
+                                              setModalState(() {
+                                                isBioExpanded = true;
+                                              });
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  EdgeInsets.only(top: 4.h),
+                                              child: Text(
+                                                'more'.tr(),
+                                                style: TextStyle(
+                                                  color: AppColors.yellow,
+                                                  fontSize: 11.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    );
+                                  },
                                 ),
                               ],
                             ],
@@ -580,6 +784,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                               height: 60.h,
                               padding: EdgeInsets.all(10.w),
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
                                   color: selectedPayment == 'payme'
@@ -607,6 +812,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                               height: 60.h,
                               padding: EdgeInsets.all(10.w),
                               decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(12.r),
                                 border: Border.all(
                                   color: selectedPayment == 'click'
@@ -635,11 +841,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                               padding: EdgeInsets.all(10.w),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12.r),
-                                color: selectedPayment == 'cash'
-                                    ? AppColors.yellow.withValues(alpha: 0.12)
-                                    : (isDark
-                                        ? AppColors.containerDark
-                                        : Colors.grey.withValues(alpha: 0.08)),
+                                color: Colors.white,
                                 border: Border.all(
                                   color: selectedPayment == 'cash'
                                       ? AppColors.yellow
@@ -658,26 +860,12 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Container(
-                                    width: 28.w,
-                                    height: 28.w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.yellow.withValues(
-                                        alpha: selectedPayment == 'cash' ? 0.2 : 0.1,
-                                      ),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.payments_rounded,
-                                      size: 16.sp,
-                                      color: AppColors.yellow,
-                                    ),
-                                  ),
+                                  Text("💵",style: TextStyle(fontSize: 22.sp),),
                                   SizedBox(width: 8.w),
                                   Text(
                                     'Naqd',
                                     style: TextStyle(
-                                      color: isDark ? Colors.white : Colors.black,
+                                      color: Colors.black,
                                       fontSize: 12.sp,
                                       fontWeight: FontWeight.w600,
                                     ),
@@ -780,7 +968,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
       case 'click':
         return 'online';
       case 'cash':
-        return 'offline';
+        return 'online';
       default:
         return 'online';
     }
@@ -848,15 +1036,32 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
     DateTime date,
   ) async {
     final serviceId = widget.serviceId;
-    if (serviceId == null || serviceId.isEmpty) return;
-    if (barbers.isEmpty) return;
+    if (serviceId == null || serviceId.isEmpty || barbers.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isAvailabilityLoading = false;
+        });
+      } else {
+        _isAvailabilityLoading = false;
+      }
+      return;
+    }
 
     final dateKey = _formatAvailabilityDate(date);
     final missingBarbers = barbers.where((barber) {
       final cached = _availabilityByBarberIdDate[barber.id];
       return cached == null || !cached.containsKey(dateKey);
     }).toList();
-    if (missingBarbers.isEmpty) return;
+    if (missingBarbers.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _isAvailabilityLoading = false;
+        });
+      } else {
+        _isAvailabilityLoading = false;
+      }
+      return;
+    }
 
     setState(() {
       _isAvailabilityLoading = true;
@@ -873,26 +1078,28 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
       );
     }).toList();
 
-    final results = await Future.wait(futures);
-    if (!mounted) return;
+    try {
+      final results = await Future.wait(futures);
+      if (!mounted) return;
 
-    for (var i = 0; i < results.length; i++) {
-      results[i].fold(
-        (_) {},
-        (availability) {
-          _availabilityByBarberIdDate
-              .putIfAbsent(missingBarbers[i].id, () => {})
-              .addAll({dateKey: availability});
-        },
-      );
-    }
-
-    if (mounted) {
-      setState(() {
+      for (var i = 0; i < results.length; i++) {
+        results[i].fold(
+          (_) {},
+          (availability) {
+            _availabilityByBarberIdDate
+                .putIfAbsent(missingBarbers[i].id, () => {})
+                .addAll({dateKey: availability});
+          },
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isAvailabilityLoading = false;
+        });
+      } else {
         _isAvailabilityLoading = false;
-      });
-    } else {
-      _isAvailabilityLoading = false;
+      }
     }
   }
 
@@ -966,12 +1173,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                       _isAvailabilityLoading = true;
                     });
                     _loadAvailabilityForBarbers(_currentBarbers, selectedDate);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Buyurtma muvaffaqiyatli yaratildi!".tr()),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
+                    _showBookingSuccessOverlay();
                     _bookingBloc.add(const ResetBookingEvent());
                   } else if (state is BookingError) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -1041,7 +1243,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
 
                       // Shop Info
                       Padding(
-                        padding: EdgeInsets.all(20.w),
+                        padding: EdgeInsets.symmetric(vertical: 10.h,horizontal: 16.w),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -1154,25 +1356,6 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                                     fontSize: 14.sp,
                                   ),
                                 ),
-                                Spacer(),
-                                GestureDetector(
-                                  onTap: () {
-                                    if (widget.barbershop.id.isEmpty) return;
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ConversationPage(
-                                          barberId: widget.barbershop.id,
-                                          barberName: widget.barbershop.name,
-                                          barberImageUrl:
-                                              widget.barbershop.imageUrl,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Icon(Icons.message),
-                                ),
                               ],
                             ),
                             if (widget.barbershop.description.isNotEmpty) ...[
@@ -1186,43 +1369,39 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                               ),
                             ],
                             if (_hasShopLocation) ...[
-                              SizedBox(height: 12.h),
+                              SizedBox(height: 16.h),
                               GestureDetector(
                                 onTap: _openMapPicker,
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 10.h,
-                                  ),
+                                  height: 60.h,
+                                  width: double.infinity,
                                   decoration: BoxDecoration(
-                                    color: isDark
-                                        ? AppColors.containerDark
-                                        : Colors.grey.withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(10.r),
+                                    borderRadius: BorderRadius.circular(16.r),
                                   ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.map,
-                                        color: subtextColor,
-                                        size: 18.sp,
-                                      ),
-                                      SizedBox(width: 8.w),
-                                      Expanded(
-                                        child: Text(
-                                          'Open in maps'.tr(),
-                                          style: TextStyle(
-                                            color: subtextColor,
-                                            fontSize: 14.sp,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: Stack(
+                                      children: [
+                                        // Map background with grid pattern
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(image: AssetImage("assets/images/map.jpg"),fit: BoxFit.cover)
+
                                           ),
                                         ),
-                                      ),
-                                      Icon(
-                                        Icons.chevron_right,
-                                        color: subtextColor,
-                                        size: 18.sp,
-                                      ),
-                                    ],
+                                        // Grid lines to simulate map
+                                        // Location pin in center
+                                        Center(
+                                          child: Icon(
+                                            Icons.location_on,
+                                            color: AppColors.yellow,
+                                            size: 28.sp,
+                                          ),
+                                        ),
+                                        // Ripple effect around pin
+                                        // Bottom overlay with address and action
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1444,14 +1623,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
 
         // Time Slots
         Expanded(
-          child: availableSlots.isEmpty
-              ? Center(
-                  child: Text(
-                    "Bo'sh vaqtlar topilmadi",
-                    style: TextStyle(color: subtextColor, fontSize: 14.sp),
-                  ),
-                )
-              : GridView.builder(
+          child: GridView.builder(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -1532,7 +1704,6 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
             );
           }).toList();
           _currentBarbers = mastersList;
-          _loadAvailabilityForBarbers(mastersList, selectedDate);
           if (_isAvailabilityLoading) {
             return Center(
               child: CircularProgressIndicator(color: AppColors.yellow),
@@ -1848,21 +2019,21 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
               ),
             ),
 
-            // Rating
-            Row(
-              children: [
-                Text(
-                  master.rating.toString(),
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // Rating
+                Row(
+                  children: [
+                    Text(
+                      master.rating.toString(),
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Icon(Icons.star, color: AppColors.yellow, size: 16.sp),
+                  ],
                 ),
-                SizedBox(width: 4.w),
-                Icon(Icons.star, color: AppColors.yellow, size: 16.sp),
-              ],
-            ),
               ],
             ),
           ),
@@ -1873,6 +2044,79 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
 
   bool _isActive(String status) {
     return status.toLowerCase() == 'active';
+  }
+}
+
+class _MapChoiceButton extends StatelessWidget {
+  final String assetPath;
+  final String label;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _MapChoiceButton({
+    required this.assetPath,
+    required this.label,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 12.w),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.containerDark : Colors.grey.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(16.r),
+            border: Border.all(
+              color: isDark ? Colors.white12 : Colors.grey.withValues(alpha: 0.2),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56.w,
+                height: 56.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12.r),
+                  child: Image.asset(
+                    assetPath,
+                    width: 56.w,
+                    height: 56.w,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

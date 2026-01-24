@@ -184,5 +184,8 @@
   "reviews_count": "({count} ta sharh)",
   "service_selected": "{name} tanlandi",
   "time_up_to": "{start} dan {end} gacha",
-  "years_experience": "{years} yil tajriba"
+  "years_experience": "{years} yil tajriba",
+  "tap_to_open_maps": "Xaritada ochish uchun bosing",
+  "route": "Yo'nalish",
+  "Xaritani tanlang": "Xaritani tanlang"
 }

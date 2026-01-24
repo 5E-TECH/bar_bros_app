@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "63352248047",
+    "project_id": "styleup-buisness",
+    "storage_bucket": "styleup-buisness.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63352248047:android:1d9a1e9df0c191645f2d1a",
+        "android_client_info": {
+          "package_name": "com.example.bar_brons_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjteSZiWC9X-KC65xkoRLLMYUe_S49gao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63352248047:android:2acaefdd1f4830955f2d1a",
+        "android_client_info": {
+          "package_name": "com.example.bar_bros_user"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAjteSZiWC9X-KC65xkoRLLMYUe_S49gao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

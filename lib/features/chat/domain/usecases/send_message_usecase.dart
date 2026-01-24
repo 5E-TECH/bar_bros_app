@@ -8,12 +8,12 @@ import 'package:injectable/injectable.dart';
 class SendMessageParams {
   final String message;
   final String barberId;
-  final String? imagePath;
+  final List<String>? imagePaths;
 
   SendMessageParams({
     required this.message,
     required this.barberId,
-    this.imagePath,
+    this.imagePaths,
   });
 }
 
@@ -28,7 +28,7 @@ class SendMessageUseCase implements UseCase<ChatMessage, SendMessageParams> {
     return await _repository.sendMessage(
       message: params.message,
       barberId: params.barberId,
-      imagePath: params.imagePath,
+      imagePaths: params.imagePaths,
     );
   }
 }

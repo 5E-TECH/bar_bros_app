@@ -4,7 +4,9 @@ import 'package:bar_bros_user/features/barbers_by_shop_service/domain/entities/b
 import 'package:bar_bros_user/features/barbers_by_shop_service/domain/repositories/barbers_by_shop_service_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:bar_bros_user/core/error/failure.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class GetBarbersByShopServiceUseCase
     implements UseCase<List<BarberByShopService>, BarbersByShopServiceQuery> {
   final BarbersByShopServiceRepository _repository;

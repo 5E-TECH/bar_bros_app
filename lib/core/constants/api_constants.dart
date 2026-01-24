@@ -16,6 +16,8 @@ class Constants {
      static final getBookingAvailabilityRange = "/booking/availability-range";
      static final getUserBookings = "/booking/User_booking";
      static final createBooking = "/booking";
+     static final getMyNotifications = "/notification/my";
+     static final getBarberById = "/barber"; // /barber/:id
 
      // Category endpoints
      static final getAllCategories = "/category/getAll";

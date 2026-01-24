@@ -5,7 +5,7 @@ class ChatMessage extends Equatable {
   final String message;
   final String userId;
   final String barberId;
-  final String imageUrl;
+  final List<String> imageUrls;
   final String createdAt;
   final String senderRole;
 
@@ -14,7 +14,7 @@ class ChatMessage extends Equatable {
     required this.message,
     required this.userId,
     required this.barberId,
-    required this.imageUrl,
+    required this.imageUrls,
     required this.createdAt,
     required this.senderRole,
   });
@@ -25,7 +25,7 @@ class ChatMessage extends Equatable {
         message,
         userId,
         barberId,
-        imageUrl,
+        imageUrls,
         createdAt,
         senderRole,
       ];

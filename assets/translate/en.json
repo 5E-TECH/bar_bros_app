@@ -184,5 +184,8 @@
   "search": "Search",
   "service_selected": "{name} selected",
   "time_up_to": "{start} to {end}",
-  "years_experience": "{years} years experience"
+  "years_experience": "{years} years experience",
+  "tap_to_open_maps": "Tap to open in maps",
+  "route": "Route",
+  "Xaritani tanlang": "Select map"
 }

@@ -128,7 +128,11 @@ class _CategoryTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final shadowColor =
+        isDark ? Colors.black.withValues(alpha: 0.45) : Colors.black.withValues(alpha: 0.18);
+    return InkWell(
+      borderRadius: BorderRadius.circular(16.r),
       onTap: () {
         Navigator.push(
           context,
@@ -141,36 +145,41 @@ class _CategoryTile extends StatelessWidget {
           ),
         );
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: shadowColor,
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12.r),
                 child: _buildImage(),
               ),
             ),
-            SizedBox(height: 8.h),
-            Padding(
-              padding:  EdgeInsets.only(bottom: 8.h,right: 8.w,left: 8.w),
-              child: Text(
-                category.name,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                ),
+          ),
+          SizedBox(height: 8.h),
+          Padding(
+            padding: EdgeInsets.only(bottom: 8.h, right: 8.w, left: 8.w),
+            child: Text(
+              category.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

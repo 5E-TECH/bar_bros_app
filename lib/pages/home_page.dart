@@ -4,8 +4,13 @@ import 'package:bar_bros_user/core/theme/app_colors.dart';
 import 'package:bar_bros_user/core/widgets/home_page_widgets/promo_card.dart';
 import 'package:bar_bros_user/core/widgets/home_page_widgets/service_category_widget.dart';
 import 'package:bar_bros_user/core/widgets/text_field_widget.dart';
+import 'package:bar_bros_user/core/di/ingector.dart';
+import 'package:bar_bros_user/core/storage/local_storage.dart';
 import 'package:bar_bros_user/features/category/domain/entities/category.dart';
 import 'package:bar_bros_user/features/category/presentation/bloc/category_bloc.dart';
+import 'package:bar_bros_user/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:bar_bros_user/features/notification/presentation/bloc/notification_event.dart';
+import 'package:bar_bros_user/features/notification/presentation/bloc/notification_state.dart';
 import 'package:bar_bros_user/features/service/domain/entities/service.dart';
 import 'package:bar_bros_user/features/service/presentation/bloc/service_bloc.dart';
 import 'package:bar_bros_user/features/service/presentation/bloc/service_event.dart';
@@ -13,6 +18,7 @@ import 'package:bar_bros_user/features/service/presentation/bloc/service_state.d
 import 'package:bar_bros_user/pages/berbers_page.dart';
 import 'package:bar_bros_user/pages/category/man_categories_page.dart';
 import 'package:bar_bros_user/pages/category/woman_categories_page.dart';
+import 'package:bar_bros_user/pages/notifications_page.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -37,6 +43,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
   Timer? _autoScrollRestartTimer;
   CategoryState? _cachedState;
   int _promoPageCount = 0;
+  Set<String> _locallyReadNotificationIds = {};
 
   static const Duration _autoScrollDuration = Duration(seconds: 4);
   static const Duration _autoScrollRestartDelay = Duration(seconds: 3);
@@ -45,10 +52,20 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
   void initState() {
     super.initState();
     _startAutoScroll();
+    _loadLocalReadNotificationIds();
     // Trigger category loading immediately
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<CategoryBloc>().add(const GetAllCategoriesEvent());
       context.read<ServiceBloc>().add(const GetAllServicesEvent());
+    });
+  }
+
+  Future<void> _loadLocalReadNotificationIds() async {
+    final storage = getIt<LocalStorage>();
+    final ids = await storage.getNotificationsReadIds();
+    if (!mounted) return;
+    setState(() {
+      _locallyReadNotificationIds = ids.toSet();
     });
   }
 
@@ -251,6 +268,7 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                 },
                 child: PageView(
                   controller: _promoPageController,
+                  physics: const NeverScrollableScrollPhysics(),
                   onPageChanged: (int page) {
                     setState(() {
                       _currentPage = page;
@@ -457,8 +475,63 @@ class _BarbershopHomeScreenState extends State<BarbershopHomeScreen> {
                 }
               },
               icon: Icon(_isSearchActive ? Icons.close : Icons.search)),
-          IconButton.outlined(
-              onPressed: () {}, icon: const Icon(Icons.notifications_none)),
+          BlocBuilder<NotificationBloc, NotificationState>(
+            builder: (context, state) {
+              int unreadCount = 0;
+              if (state is NotificationLoaded) {
+                unreadCount = state.items
+                    .where((item) =>
+                        !item.isRead &&
+                        !_locallyReadNotificationIds.contains(item.id))
+                    .length;
+              }
+              final showBadge = unreadCount > 0;
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  IconButton.outlined(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsPage(),
+                        ),
+                      ).then((_) {
+                        _loadLocalReadNotificationIds();
+                        context
+                            .read<NotificationBloc>()
+                            .add(const GetMyNotificationsEvent());
+                      });
+                    },
+                    icon: const Icon(Icons.notifications_none),
+                  ),
+                  if (showBadge)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 5.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.yellow,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Text(
+                          unreadCount > 99 ? '99+' : unreadCount.toString(),
+                          style: TextStyle(
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           SizedBox(
             width: 16.w,
           )

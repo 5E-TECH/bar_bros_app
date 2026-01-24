@@ -62,7 +62,7 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<Either<Failure, ChatMessage>> sendMessage({
     required String message,
     required String barberId,
-    String? imagePath,
+    List<String>? imagePaths,
   }) async {
     try {
       final token = await _localStorage.getToken();
@@ -75,7 +75,7 @@ class ChatRepositoryImpl implements ChatRepository {
         message: message,
         userId: userId,
         barberId: barberId,
-        imagePath: imagePath,
+        imagePaths: imagePaths,
       );
       return Right(result);
     } on ServerException catch (e) {

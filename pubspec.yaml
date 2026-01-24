@@ -38,6 +38,8 @@ dependencies:
   shared_preferences: ^2.5.3
   flutter_svg: ^2.2.3
   flutter_bloc: ^9.1.1
+  firebase_core: ^3.15.0
+  firebase_messaging: ^15.1.0
   get_it: ^9.1.1
   injectable: ^2.7.0
   build_runner: ^2.10.4
@@ -116,7 +118,3 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/images/logo.png"
-  adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/images/logo.png"
-  min_sdk_android: 21

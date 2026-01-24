@@ -36,17 +36,20 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String orderType,
   }) async {
     try {
+      final requestData = {
+        'service_id': serviceId,
+        'barber_id': barberId,
+        'barber_shop_id': barberShopId,
+        'date': date,
+        'time': time,
+        'payment_model': paymentModel,
+        'order_type': orderType,
+      };
+      print('Booking request data: $requestData');
+
       final response = await _dio.post(
         Constants.createBooking,
-        data: {
-          'service_id': serviceId,
-          'barber_id': barberId,
-          'barber_shop_id': barberShopId,
-          'date': date,
-          'time': time,
-          'payment_model': paymentModel,
-          'order_type': orderType,
-        },
+        data: requestData,
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),
@@ -62,7 +65,13 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
         throw ServerException(CustomExceptionsText.unauthorized);
       }
       if (e.response?.statusCode == 400) {
-        throw ServerException(CustomExceptionsText.bookingFailed);
+        final errorData = e.response?.data;
+        print('Booking error 400 response: $errorData');
+        String errorMessage = CustomExceptionsText.bookingFailed;
+        if (errorData is Map) {
+          errorMessage = errorData['message'] ?? errorData['error'] ?? errorMessage;
+        }
+        throw ServerException(errorMessage);
       }
       throw NetworkException(e.message ?? CustomExceptionsText.network);
     } catch (e) {

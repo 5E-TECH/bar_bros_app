@@ -27,14 +27,14 @@ class GetMyChatsEvent extends ChatEvent {
 class SendMessageEvent extends ChatEvent {
   final String message;
   final String barberId;
-  final String? imagePath;
+  final List<String>? imagePaths;
 
   const SendMessageEvent({
     required this.message,
     required this.barberId,
-    this.imagePath,
+    this.imagePaths,
   });
 
   @override
-  List<Object?> get props => [message, barberId, imagePath];
+  List<Object?> get props => [message, barberId, imagePaths];
 }

@@ -58,9 +58,9 @@ import 'package:bar_bros_user/features/barbers_by_shop_service/data/repositories
 import 'package:bar_bros_user/features/barbers_by_shop_service/domain/repositories/barbers_by_shop_service_repository.dart'
     as _i635;
 import 'package:bar_bros_user/features/barbers_by_shop_service/domain/usecases/get_barbers_by_shop_service_usecase.dart'
-    as _i1200;
+    as _i329;
 import 'package:bar_bros_user/features/barbers_by_shop_service/presentation/bloc/barbers_by_shop_service_bloc.dart'
-    as _i1201;
+    as _i684;
 import 'package:bar_bros_user/features/booking/data/datasources/booking_datasource.dart'
     as _i244;
 import 'package:bar_bros_user/features/booking/data/repositories/booking_repository_impl.dart'
@@ -78,19 +78,15 @@ import 'package:bar_bros_user/features/booking_availability/data/repositories/bo
 import 'package:bar_bros_user/features/booking_availability/domain/repositories/booking_availability_repository.dart'
     as _i782;
 import 'package:bar_bros_user/features/booking_availability/domain/usecases/get_booking_availability_usecase.dart'
-    as _i1202;
+    as _i451;
 import 'package:bar_bros_user/features/booking_availability/presentation/bloc/booking_availability_bloc.dart'
-    as _i1203;
+    as _i534;
 import 'package:bar_bros_user/features/booking_availability_range/data/datasources/booking_availability_range_datasource.dart'
     as _i630;
 import 'package:bar_bros_user/features/booking_availability_range/data/repositories/booking_availability_range_repository_impl.dart'
     as _i80;
 import 'package:bar_bros_user/features/booking_availability_range/domain/repositories/booking_availability_range_repository.dart'
     as _i829;
-import 'package:bar_bros_user/features/booking_availability_range/domain/usecases/get_booking_availability_range_usecase.dart'
-    as _i1204;
-import 'package:bar_bros_user/features/booking_availability_range/presentation/bloc/booking_availability_range_bloc.dart'
-    as _i1205;
 import 'package:bar_bros_user/features/category/data/datasources/category_datasource.dart'
     as _i866;
 import 'package:bar_bros_user/features/category/data/repositories/category_repository_impl.dart'
@@ -119,6 +115,16 @@ import 'package:bar_bros_user/features/chat/domain/usecases/send_message_usecase
     as _i205;
 import 'package:bar_bros_user/features/chat/presentation/bloc/chat_bloc.dart'
     as _i504;
+import 'package:bar_bros_user/features/notification/data/datasources/notification_datasource.dart'
+    as _i800;
+import 'package:bar_bros_user/features/notification/data/repositories/notification_repository_impl.dart'
+    as _i617;
+import 'package:bar_bros_user/features/notification/domain/repositories/notification_repository.dart'
+    as _i841;
+import 'package:bar_bros_user/features/notification/domain/usecases/get_my_notifications_usecase.dart'
+    as _i1040;
+import 'package:bar_bros_user/features/notification/presentation/bloc/notification_bloc.dart'
+    as _i422;
 import 'package:bar_bros_user/features/service/data/datasources/service_datasource.dart'
     as _i983;
 import 'package:bar_bros_user/features/service/data/repositories/service_repository_impl.dart'
@@ -131,15 +137,15 @@ import 'package:bar_bros_user/features/service/presentation/bloc/service_bloc.da
     as _i990;
 import 'package:bar_bros_user/features/theme/bloc/theme_bloc.dart' as _i857;
 import 'package:bar_bros_user/features/user_booking/data/datasources/user_booking_datasource.dart'
-    as _i1300;
+    as _i343;
 import 'package:bar_bros_user/features/user_booking/data/repositories/user_booking_repository_impl.dart'
-    as _i1301;
+    as _i811;
 import 'package:bar_bros_user/features/user_booking/domain/repositories/user_booking_repository.dart'
-    as _i1302;
+    as _i142;
 import 'package:bar_bros_user/features/user_booking/domain/usecases/get_user_bookings_usecase.dart'
-    as _i1303;
+    as _i762;
 import 'package:bar_bros_user/features/user_booking/presentation/bloc/user_booking_bloc.dart'
-    as _i1304;
+    as _i242;
 import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -160,11 +166,17 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio);
     gh.lazySingleton<_i857.ThemeBloc>(() => _i857.ThemeBloc());
+    gh.lazySingleton<_i800.NotificationRemoteDataSource>(
+      () => _i800.NotificationRemoteDataSourceImpl(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i630.BookingAvailabilityRangeRemoteDataSource>(
       () => _i630.BookingAvailabilityRangeRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i983.ServiceRemoteDataSource>(
       () => _i983.ServiceRemoteDataSourceImpl(gh<_i361.Dio>()),
+    );
+    gh.lazySingleton<_i343.UserBookingRemoteDataSource>(
+      () => _i343.UserBookingRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
     gh.lazySingleton<_i244.BookingRemoteDataSource>(
       () => _i244.BookingRemoteDataSourceImpl(gh<_i361.Dio>()),
@@ -178,9 +190,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i386.BarbersByShopServiceRemoteDataSource>(
       () => _i386.BarbersByShopServiceRemoteDataSourceImpl(gh<_i361.Dio>()),
     );
-    gh.lazySingleton<_i1300.UserBookingRemoteDataSource>(
-      () => _i1300.UserBookingRemoteDataSourceImpl(gh<_i361.Dio>()),
-    );
     gh.lazySingleton<_i726.LocalStorage>(
       () => _i726.LocalStorageImpl(gh<_i460.SharedPreferences>()),
     );
@@ -188,11 +197,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i80.BookingAvailabilityRangeRepositoryImpl(
         gh<_i630.BookingAvailabilityRangeRemoteDataSource>(),
         gh<_i726.LocalStorage>(),
-      ),
-    );
-    gh.lazySingleton<_i1204.GetBookingAvailabilityRangeUseCase>(
-      () => _i1204.GetBookingAvailabilityRangeUseCase(
-        gh<_i829.BookingAvailabilityRangeRepository>(),
       ),
     );
     gh.lazySingleton<_i827.AuthRemoteDataSource>(
@@ -211,11 +215,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i947.BookingAvailabilityRepositoryImpl(
         gh<_i851.BookingAvailabilityRemoteDataSource>(),
         gh<_i726.LocalStorage>(),
-      ),
-    );
-    gh.lazySingleton<_i1202.GetBookingAvailabilityUseCase>(
-      () => _i1202.GetBookingAvailabilityUseCase(
-        gh<_i782.BookingAvailabilityRepository>(),
       ),
     );
     gh.lazySingleton<_i335.BarberShopServiceRepository>(
@@ -242,25 +241,21 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i726.LocalStorage>(),
       ),
     );
-    gh.lazySingleton<_i1302.UserBookingRepository>(
-      () => _i1301.UserBookingRepositoryImpl(
-        gh<_i1300.UserBookingRemoteDataSource>(),
+    gh.lazySingleton<_i142.UserBookingRepository>(
+      () => _i811.UserBookingRepositoryImpl(
+        gh<_i343.UserBookingRemoteDataSource>(),
         gh<_i726.LocalStorage>(),
-      ),
-    );
-    gh.lazySingleton<_i1200.GetBarbersByShopServiceUseCase>(
-      () => _i1200.GetBarbersByShopServiceUseCase(
-        gh<_i635.BarbersByShopServiceRepository>(),
-      ),
-    );
-    gh.lazySingleton<_i1303.GetUserBookingsUseCase>(
-      () => _i1303.GetUserBookingsUseCase(
-        gh<_i1302.UserBookingRepository>(),
       ),
     );
     gh.lazySingleton<_i971.ChatRepository>(
       () => _i301.ChatRepositoryImpl(
         gh<_i763.ChatRemoteDataSource>(),
+        gh<_i726.LocalStorage>(),
+      ),
+    );
+    gh.lazySingleton<_i841.NotificationRepository>(
+      () => _i617.NotificationRepositoryImpl(
+        gh<_i800.NotificationRemoteDataSource>(),
         gh<_i726.LocalStorage>(),
       ),
     );
@@ -274,6 +269,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i244.BookingRemoteDataSource>(),
         gh<_i726.LocalStorage>(),
       ),
+    );
+    gh.lazySingleton<_i762.GetUserBookingsUseCase>(
+      () => _i762.GetUserBookingsUseCase(gh<_i142.UserBookingRepository>()),
     );
     gh.lazySingleton<_i919.CheckAuthUseCase>(
       () => _i919.CheckAuthUseCase(gh<_i726.LocalStorage>()),
@@ -295,6 +293,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i205.SendMessageUseCase>(
       () => _i205.SendMessageUseCase(gh<_i971.ChatRepository>()),
+    );
+    gh.factory<_i242.UserBookingBloc>(
+      () => _i242.UserBookingBloc(gh<_i762.GetUserBookingsUseCase>()),
+    );
+    gh.lazySingleton<_i451.GetBookingAvailabilityUseCase>(
+      () => _i451.GetBookingAvailabilityUseCase(
+        gh<_i782.BookingAvailabilityRepository>(),
+      ),
     );
     gh.lazySingleton<_i811.GetMyAccountUseCase>(
       () => _i811.GetMyAccountUseCase(gh<_i767.AuthRepository>()),
@@ -332,6 +338,11 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i726.LocalStorage>(),
       ),
     );
+    gh.lazySingleton<_i329.GetBarbersByShopServiceUseCase>(
+      () => _i329.GetBarbersByShopServiceUseCase(
+        gh<_i635.BarbersByShopServiceRepository>(),
+      ),
+    );
     gh.lazySingleton<_i710.GetBarberShopsUseCase>(
       () => _i710.GetBarberShopsUseCase(gh<_i786.BarberShopRepository>()),
     );
@@ -348,36 +359,30 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i1066.GetAllWomanCategoriesUseCase(gh<_i1006.CategoryRepository>()),
     );
+    gh.factory<_i684.BarbersByShopServiceBloc>(
+      () => _i684.BarbersByShopServiceBloc(
+        gh<_i329.GetBarbersByShopServiceUseCase>(),
+      ),
+    );
     gh.lazySingleton<_i409.CreateBookingUseCase>(
       () => _i409.CreateBookingUseCase(gh<_i560.BookingRepository>()),
+    );
+    gh.lazySingleton<_i1040.GetMyNotificationsUseCase>(
+      () =>
+          _i1040.GetMyNotificationsUseCase(gh<_i841.NotificationRepository>()),
     );
     gh.factory<_i978.BarberShopServiceBloc>(
       () => _i978.BarberShopServiceBloc(
         gh<_i1043.GetAllBarberShopServicesUseCase>(),
       ),
     );
-    gh.factory<_i1203.BookingAvailabilityBloc>(
-      () => _i1203.BookingAvailabilityBloc(
-        gh<_i1202.GetBookingAvailabilityUseCase>(),
-      ),
-    );
-    gh.factory<_i1201.BarbersByShopServiceBloc>(
-      () => _i1201.BarbersByShopServiceBloc(
-        gh<_i1200.GetBarbersByShopServiceUseCase>(),
-      ),
-    );
-    gh.factory<_i1205.BookingAvailabilityRangeBloc>(
-      () => _i1205.BookingAvailabilityRangeBloc(
-        gh<_i1204.GetBookingAvailabilityRangeUseCase>(),
-      ),
-    );
-    gh.factory<_i1304.UserBookingBloc>(
-      () => _i1304.UserBookingBloc(
-        gh<_i1303.GetUserBookingsUseCase>(),
-      ),
-    );
     gh.lazySingleton<_i4.GetAllServicesUseCase>(
       () => _i4.GetAllServicesUseCase(gh<_i306.ServiceRepository>()),
+    );
+    gh.factory<_i534.BookingAvailabilityBloc>(
+      () => _i534.BookingAvailabilityBloc(
+        gh<_i451.GetBookingAvailabilityUseCase>(),
+      ),
     );
     gh.factory<_i273.BookingBloc>(
       () => _i273.BookingBloc(gh<_i409.CreateBookingUseCase>()),
@@ -387,6 +392,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i915.GetAllCategoriesUseCase>(),
         gh<_i575.GetAllManCategoriesUseCase>(),
         gh<_i1066.GetAllWomanCategoriesUseCase>(),
+      ),
+    );
+    gh.factory<_i422.NotificationBloc>(
+      () => _i422.NotificationBloc(
+        gh<_i1040.GetMyNotificationsUseCase>(),
+        gh<_i841.NotificationRepository>(),
       ),
     );
     gh.factory<_i990.ServiceBloc>(
