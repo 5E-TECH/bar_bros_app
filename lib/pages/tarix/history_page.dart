@@ -108,21 +108,25 @@ class _HistoryPageState extends State<HistoryPage> {
                     final bookings = _currentTabIndex == 0
                         ? state.upcomingBookings
                         : state.historyBookings;
-                    return AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 280),
-                      switchInCurve: Curves.easeOutCubic,
-                      switchOutCurve: Curves.easeInCubic,
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
-                      child: Container(
-                        key: ValueKey<int>(_currentTabIndex),
-                        child: bookings.isEmpty
-                            ? _buildEmptyTab(context)
-                            : _buildBookingsList(context, bookings),
+                    return RefreshIndicator(
+                      color: AppColors.yellow,
+                      onRefresh: _refreshBookings,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 280),
+                        switchInCurve: Curves.easeOutCubic,
+                        switchOutCurve: Curves.easeInCubic,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
+                        },
+                        child: Container(
+                          key: ValueKey<int>(_currentTabIndex),
+                          child: bookings.isEmpty
+                              ? _buildEmptyTabScrollable(context)
+                              : _buildBookingsList(context, bookings),
+                        ),
                       ),
                     );
                   }
@@ -134,6 +138,13 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> _refreshBookings() async {
+    _bookingBloc.add(const GetUserBookingsEvent());
+    await _bookingBloc.stream.firstWhere(
+      (state) => state is UserBookingLoaded || state is UserBookingError,
     );
   }
 
@@ -163,6 +174,18 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildEmptyTabScrollable(BuildContext context) {
+    return CustomScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: [
+        SliverFillRemaining(
+          hasScrollBody: false,
+          child: _buildEmptyTab(context),
+        ),
+      ],
     );
   }
 
