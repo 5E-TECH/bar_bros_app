@@ -1,8 +1,10 @@
 import 'package:bar_bros_user/features/barbers_by_shop_service/domain/usecases/get_barbers_by_shop_service_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'barbers_by_shop_service_event.dart';
 import 'barbers_by_shop_service_state.dart';
 
+@injectable
 class BarbersByShopServiceBloc
     extends Bloc<BarbersByShopServiceEvent, BarbersByShopServiceState> {
   final GetBarbersByShopServiceUseCase _getBarbersUseCase;

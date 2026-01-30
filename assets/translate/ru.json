@@ -184,5 +184,8 @@
   "search": "Поиск",
   "service_selected": "{name} выбрано",
   "time_up_to": "{start} до {end}",
-  "years_experience": "{years} лет опыта"
+  "years_experience": "{years} лет опыта",
+  "tap_to_open_maps": "Нажмите, чтобы открыть карту",
+  "route": "Маршрут",
+  "Xaritani tanlang": "Выберите карту"
 }

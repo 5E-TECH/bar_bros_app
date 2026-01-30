@@ -5,17 +5,26 @@ import 'package:bar_bros_user/features/barber_shop_services/presentation/bloc/ba
 import 'package:bar_bros_user/features/booking_availability/presentation/bloc/booking_availability_bloc.dart';
 import 'package:bar_bros_user/features/category/presentation/bloc/category_bloc.dart';
 import 'package:bar_bros_user/features/chat/presentation/bloc/chat_bloc.dart';
+import 'package:bar_bros_user/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:bar_bros_user/features/notification/presentation/bloc/notification_event.dart';
 import 'package:bar_bros_user/features/service/presentation/bloc/service_bloc.dart';
 import 'package:bar_bros_user/features/theme/bloc/theme_bloc.dart';
 import 'package:bar_bros_user/features/user_booking/presentation/bloc/user_booking_bloc.dart';
+import 'package:bar_bros_user/core/notifications/fcm_service.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FcmService.initialize();
 
   await configureDependencies();
   runApp(
@@ -52,7 +61,11 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => getIt<ChatBloc>()),
             BlocProvider(create: (context) => getIt<BarberShopServiceBloc>()),
             BlocProvider(create: (context) => getIt<BookingAvailabilityBloc>()),
-            BlocProvider(create: (context) => getIt<UserBookingBloc>())
+            BlocProvider(create: (context) => getIt<UserBookingBloc>()),
+            BlocProvider(
+              create: (context) =>
+                  getIt<NotificationBloc>()..add(const GetMyNotificationsEvent()),
+            ),
           ],
           child: AppWrapper(),
         );

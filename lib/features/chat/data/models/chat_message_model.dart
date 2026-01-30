@@ -6,18 +6,24 @@ class ChatMessageModel extends ChatMessage {
     required super.message,
     required super.userId,
     required super.barberId,
-    required super.imageUrl,
+    required super.imageUrls,
     required super.createdAt,
     required super.senderRole,
   });
 
   factory ChatMessageModel.fromJson(Map<String, dynamic> json) {
+    final imageValue = json['image'];
+    final imageUrls = imageValue is List
+        ? imageValue.map((item) => item?.toString() ?? '').toList()
+        : imageValue is String
+            ? (imageValue.isEmpty ? const <String>[] : [imageValue])
+            : const <String>[];
     return ChatMessageModel(
       id: json['id']?.toString() ?? '',
       message: json['message'] as String? ?? '',
       userId: json['user_id']?.toString() ?? '',
       barberId: json['barber_id']?.toString() ?? '',
-      imageUrl: json['image'] as String? ?? '',
+      imageUrls: imageUrls,
       createdAt: json['created_at']?.toString() ?? '',
       senderRole: json['sender_role']?.toString() ?? '',
     );

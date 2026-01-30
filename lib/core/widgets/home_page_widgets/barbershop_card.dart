@@ -6,6 +6,7 @@ import 'package:bar_bros_user/features/theme/bloc/theme_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BarbershopCard extends StatelessWidget {
   final Barbershop barbershop;
@@ -74,7 +75,7 @@ class BarbershopCard extends StatelessWidget {
                         color: Colors.grey[800],
                         borderRadius: BorderRadius.circular(12.r),
                       ),
-                      child: _buildImage(),
+                      child: _buildImage(isDark),
                     ),
                   ),
 
@@ -194,7 +195,7 @@ class BarbershopCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(bool isDark) {
     final isNetwork = barbershop.imageUrl.startsWith('http');
     final fallback = Container(
       decoration: BoxDecoration(
@@ -218,6 +219,10 @@ class BarbershopCard extends StatelessWidget {
         ? Image.network(
             barbershop.imageUrl,
             fit: BoxFit.cover,
+            loadingBuilder: (context, child, progress) {
+              if (progress == null) return child;
+              return _buildImageShimmer(isDark);
+            },
             errorBuilder: (context, error, stackTrace) => fallback,
           )
         : Image.asset(
@@ -225,6 +230,16 @@ class BarbershopCard extends StatelessWidget {
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) => fallback,
           );
+  }
+
+  Widget _buildImageShimmer(bool isDark) {
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      child: Container(color: baseColor),
+    );
   }
 
   bool _isActive(String status) {

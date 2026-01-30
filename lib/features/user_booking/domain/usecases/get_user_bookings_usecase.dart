@@ -3,7 +3,9 @@ import 'package:bar_bros_user/core/usecase/usecase.dart';
 import 'package:bar_bros_user/features/user_booking/domain/entities/user_booking.dart';
 import 'package:bar_bros_user/features/user_booking/domain/repositories/user_booking_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class GetUserBookingsUseCase implements UseCase<List<UserBooking>, NoParams> {
   final UserBookingRepository _repository;
 

@@ -136,11 +136,34 @@ https://play.google.com/store/apps/details?id=com.barbros.user
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          centerTitle: true,
+          centerTitle: false,
           title: Text(
             "profil".tr(),
             style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
           ),
+          actions: [
+            BlocBuilder<ThemeBloc, ThemeState>(
+              builder: (context, state) {
+                return Row(
+                  children: [
+                    Icon(
+                      state.isDark ? Icons.dark_mode : Icons.light_mode,
+                      color: AppColors.yellow,
+                    ),
+                    const SizedBox(width: 6),
+                    Switch(
+                      value: state.isDark,
+                      activeThumbColor: AppColors.yellow,
+                      activeTrackColor: AppColors.yellow.withValues(alpha: 0.4),
+                      onChanged: (_) =>
+                          context.read<ThemeBloc>().add(ToggleTheme()),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
         ),
         body: AnimatedOpacity(
           opacity: _pageVisible ? 1 : 0,
@@ -208,45 +231,6 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                       context,
                       MaterialPageRoute(
                         builder: (context) => const ContactPage(),
-                      ),
-                    );
-                  },
-                ),
-
-                // Theme Toggle
-                BlocBuilder<ThemeBloc, ThemeState>(
-                  builder: (context, state) {
-                    return _buildElevatedCard(
-                      isDark: isDark,
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: AppColors.yellow.withValues(
-                            alpha: 0.15,
-                          ),
-                          child: Icon(
-                            state.isDark ? Icons.dark_mode : Icons.light_mode,
-                            color: AppColors.yellow,
-                          ),
-                        ),
-                        title: Text(
-                          state.isDark
-                              ? "tungi_rejim".tr()
-                              : "kundizgi_rejim".tr(),
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w500,
-                            color: textColor,
-                          ),
-                        ),
-                        trailing: Switch(
-                          value: state.isDark,
-                          activeThumbColor: AppColors.yellow,
-                          activeTrackColor: AppColors.yellow.withValues(
-                            alpha: 0.4,
-                          ),
-                          onChanged: (_) =>
-                              context.read<ThemeBloc>().add(ToggleTheme()),
-                        ),
                       ),
                     );
                   },
@@ -384,7 +368,7 @@ https://play.google.com/store/apps/details?id=com.barbros.user
                     );
                   },
                 ),
-                SizedBox(height: 35.h,),
+                SizedBox(height: 65.h,),
 
                 // Logout Button
                 const LogoutButtonWidget(text: "akkountdan_chiqish"),

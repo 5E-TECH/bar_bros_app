@@ -14,6 +14,6 @@ abstract class ChatRepository {
   Future<Either<Failure, ChatMessage>> sendMessage({
     required String message,
     required String barberId,
-    String? imagePath,
+    List<String>? imagePaths,
   });
 }

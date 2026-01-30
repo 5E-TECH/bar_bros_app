@@ -21,7 +21,7 @@ abstract class ChatRemoteDataSource {
     required String message,
     required String userId,
     required String barberId,
-    String? imagePath,
+    List<String>? imagePaths,
   });
 }
 
@@ -105,15 +105,21 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     required String message,
     required String userId,
     required String barberId,
-    String? imagePath,
+    List<String>? imagePaths,
   }) async {
     try {
+      final images = <MultipartFile>[];
+      if (imagePaths != null && imagePaths.isNotEmpty) {
+        for (final path in imagePaths) {
+          if (path.isEmpty) continue;
+          images.add(await MultipartFile.fromFile(path));
+        }
+      }
       final formData = FormData.fromMap({
         'message': message,
         'user_id': userId,
         'barber_id': barberId,
-        if (imagePath != null && imagePath.isNotEmpty)
-          'image': await MultipartFile.fromFile(imagePath),
+        if (images.isNotEmpty) 'image': images,
       });
 
       final response = await _dio.post(
@@ -125,8 +131,16 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = response.data['data'] as Map<String, dynamic>;
-        return ChatMessageModel.fromJson(data);
+        final rawData = response.data['data'];
+        if (rawData is List && rawData.isNotEmpty) {
+          final item = rawData.last;
+          if (item is Map<String, dynamic>) {
+            return ChatMessageModel.fromJson(item);
+          }
+        } else if (rawData is Map<String, dynamic>) {
+          return ChatMessageModel.fromJson(rawData);
+        }
+        throw ServerException(CustomExceptionsText.failed);
       } else {
         throw ServerException(CustomExceptionsText.failed);
       }

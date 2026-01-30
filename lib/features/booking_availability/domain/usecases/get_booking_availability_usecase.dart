@@ -4,7 +4,9 @@ import 'package:bar_bros_user/features/booking_availability/domain/entities/book
 import 'package:bar_bros_user/features/booking_availability/domain/entities/booking_availability_query.dart';
 import 'package:bar_bros_user/features/booking_availability/domain/repositories/booking_availability_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class GetBookingAvailabilityUseCase
     implements UseCase<BookingAvailability, BookingAvailabilityQuery> {
   final BookingAvailabilityRepository _repository;

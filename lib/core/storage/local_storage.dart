@@ -15,6 +15,10 @@ abstract class LocalStorage {
   Future<String?> getUserId();
   Future<void> saveUserFullName(String fullName);
   Future<String?> getUserFullName();
+  Future<void> saveNotificationsLastSeenUnreadCount(int count);
+  Future<int> getNotificationsLastSeenUnreadCount();
+  Future<void> saveNotificationsReadIds(List<String> ids);
+  Future<List<String>> getNotificationsReadIds();
 }
 @LazySingleton(as: LocalStorage)
 class LocalStorageImpl implements LocalStorage {
@@ -25,6 +29,9 @@ class LocalStorageImpl implements LocalStorage {
   static const String _verificationTokenKey = "verification_token";
   static const String _userIdKey = "user_id";
   static const String _userFullNameKey = "user_full_name";
+  static const String _notificationsLastSeenUnreadCountKey =
+      "notifications_last_seen_unread_count";
+  static const String _notificationsReadIdsKey = "notifications_read_ids";
 
   LocalStorageImpl(this._prefs);
 
@@ -90,6 +97,26 @@ class LocalStorageImpl implements LocalStorage {
   @override
   Future<String?> getUserFullName() async {
     return _prefs.getString(_userFullNameKey);
+  }
+
+  @override
+  Future<void> saveNotificationsLastSeenUnreadCount(int count) async {
+    await _prefs.setInt(_notificationsLastSeenUnreadCountKey, count);
+  }
+
+  @override
+  Future<int> getNotificationsLastSeenUnreadCount() async {
+    return _prefs.getInt(_notificationsLastSeenUnreadCountKey) ?? 0;
+  }
+
+  @override
+  Future<void> saveNotificationsReadIds(List<String> ids) async {
+    await _prefs.setStringList(_notificationsReadIdsKey, ids);
+  }
+
+  @override
+  Future<List<String>> getNotificationsReadIds() async {
+    return _prefs.getStringList(_notificationsReadIdsKey) ?? <String>[];
   }
 
 }

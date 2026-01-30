@@ -1,8 +1,10 @@
 import 'package:bar_bros_user/features/booking_availability/domain/usecases/get_booking_availability_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'booking_availability_event.dart';
 import 'booking_availability_state.dart';
 
+@injectable
 class BookingAvailabilityBloc
     extends Bloc<BookingAvailabilityEvent, BookingAvailabilityState> {
   final GetBookingAvailabilityUseCase _getAvailabilityUseCase;

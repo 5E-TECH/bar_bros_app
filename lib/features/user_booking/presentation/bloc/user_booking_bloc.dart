@@ -2,9 +2,11 @@ import 'package:bar_bros_user/core/usecase/usecase.dart';
 import 'package:bar_bros_user/features/user_booking/domain/entities/user_booking.dart';
 import 'package:bar_bros_user/features/user_booking/domain/usecases/get_user_bookings_usecase.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:injectable/injectable.dart';
 import 'user_booking_event.dart';
 import 'user_booking_state.dart';
 
+@injectable
 class UserBookingBloc extends Bloc<UserBookingEvent, UserBookingState> {
   final GetUserBookingsUseCase _getUserBookingsUseCase;
 

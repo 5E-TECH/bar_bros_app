@@ -67,7 +67,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       SendMessageParams(
         message: event.message,
         barberId: event.barberId,
-        imagePath: event.imagePath,
+        imagePaths: event.imagePaths,
       ),
     );
 

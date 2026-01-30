@@ -17,7 +17,6 @@ class AdvancedCurvedBottomNav extends StatefulWidget {
 class _AdvancedCurvedBottomNavState extends State<AdvancedCurvedBottomNav> {
   static int _lastIndex = 0;
   int _selectedIndex = 0;
-  late final PageController _pageController;
 
   List<NavBarItem> get _items => [
     NavBarItem(iconPath: "assets/svgs/home.svg", label: "uy".tr()),
@@ -29,24 +28,12 @@ class _AdvancedCurvedBottomNavState extends State<AdvancedCurvedBottomNav> {
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
     _lastIndex = index;
-    _pageController.animateToPage(
-      index,
-      duration: const Duration(milliseconds: 250),
-      curve: Curves.easeInOut,
-    );
   }
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = _lastIndex;
-    _pageController = PageController(initialPage: _selectedIndex);
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
   }
 
   @override
@@ -54,12 +41,8 @@ class _AdvancedCurvedBottomNavState extends State<AdvancedCurvedBottomNav> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final navColor = isDark ? AppColors.containerDark : AppColors.backgroundLight;
     return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() => _selectedIndex = index);
-          _lastIndex = index;
-        },
+      body: IndexedStack(
+        index: _selectedIndex,
         children: const [
           BarbershopHomeScreen(),
           HistoryPage(),

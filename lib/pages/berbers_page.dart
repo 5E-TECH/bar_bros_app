@@ -21,6 +21,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:shimmer/shimmer.dart';
 
 class BarbersPage extends StatefulWidget {
   final String? serviceId;
@@ -314,12 +315,7 @@ class _BarbersPageState extends State<BarbersPage> {
 
   Widget _buildServiceImage() {
     if (_isServiceImageLoading) {
-      return SizedBox(
-        height: 120.h,
-        child: Center(
-          child: CircularProgressIndicator(color: AppColors.yellow),
-        ),
-      );
+      return _buildServiceImageShimmer();
     }
     final imageUrl = _serviceImageUrl;
     if (imageUrl == null || imageUrl.isEmpty) {
@@ -334,28 +330,35 @@ class _BarbersPageState extends State<BarbersPage> {
             ? SvgPicture.network(
                 imageUrl,
                 fit: BoxFit.cover,
-                placeholderBuilder: (_) => Center(
-                  child: CircularProgressIndicator(color: AppColors.yellow),
-                ),
+                placeholderBuilder: (_) => _buildServiceImageShimmer(),
               )
             : Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, progress) {
                   if (progress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      color: AppColors.yellow,
-                      value: progress.expectedTotalBytes != null
-                          ? progress.cumulativeBytesLoaded /
-                              progress.expectedTotalBytes!
-                          : null,
-                    ),
-                  );
+                  return _buildServiceImageShimmer();
                 },
                 errorBuilder: (context, error, stackTrace) =>
                     Container(color: Colors.grey.withValues(alpha: 0.2)),
               ),
+      ),
+    );
+  }
+
+  Widget _buildServiceImageShimmer() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16.r),
+      child: AspectRatio(
+        aspectRatio: 16 / 7,
+        child: Shimmer.fromColors(
+          baseColor: baseColor,
+          highlightColor: highlightColor,
+          child: Container(color: baseColor),
+        ),
       ),
     );
   }
