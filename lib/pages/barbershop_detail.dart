@@ -26,11 +26,13 @@ import 'package:url_launcher/url_launcher.dart';
 class BarbershopDetailPage extends StatefulWidget {
   final Barbershop barbershop;
   final String? serviceId;
+  final String? autoOpenBarberId;
 
   const BarbershopDetailPage({
     super.key,
     required this.barbershop,
     this.serviceId,
+    this.autoOpenBarberId,
   });
 
   @override
@@ -49,6 +51,7 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
   bool _isAvailabilityLoading = false;
   List<Master> _currentBarbers = [];
   bool _isBookingSheetOpen = false;
+  bool _autoOpenHandled = false;
   double? _shopLatitude;
   double? _shopLongitude;
 
@@ -948,6 +951,22 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
     );
   }
 
+  void _tryAutoOpenBookingSheet(List<Master> mastersList) {
+    if (_autoOpenHandled || widget.autoOpenBarberId == null) return;
+    final target = mastersList.cast<Master?>().firstWhere(
+      (m) => m!.id == widget.autoOpenBarberId,
+      orElse: () => null,
+    );
+    if (target == null) return;
+    _autoOpenHandled = true;
+    _tabController.animateTo(1);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _isBookingSheetOpen) return;
+      final dark = Theme.of(context).brightness == Brightness.dark;
+      _showBookingSheet(target, dark);
+    });
+  }
+
   String _mapPaymentModel(String value) {
     switch (value) {
       case 'payme':
@@ -1157,6 +1176,9 @@ class _BarbershopDetailPageState extends State<BarbershopDetailPage>
                     }).toList();
                     _currentBarbers = mastersList;
                     _loadAvailabilityForBarbers(mastersList, selectedDate);
+
+                    // Auto-open booking sheet for specific barber
+                    _tryAutoOpenBookingSheet(mastersList);
                   }
                 },
               ),

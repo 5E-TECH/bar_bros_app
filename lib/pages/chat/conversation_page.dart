@@ -5,6 +5,7 @@ import 'package:bar_bros_user/core/constants/api_constants.dart';
 import 'package:bar_bros_user/core/di/ingector.dart';
 import 'package:bar_bros_user/core/storage/local_storage.dart';
 import 'package:bar_bros_user/core/theme/app_colors.dart';
+import 'package:bar_bros_user/features/barber_shop/domain/entities/barber_shop_item.dart';
 import 'package:bar_bros_user/features/barber_shop/domain/entities/barber_shop_query.dart';
 import 'package:bar_bros_user/features/barber_shop/domain/usecases/get_barber_shops_usecase.dart';
 import 'package:bar_bros_user/features/chat/domain/entities/chat_message.dart';
@@ -111,7 +112,7 @@ class _ConversationPageState extends State<ConversationPage>
           (_) {},
           (shops) {
         if (shops.isEmpty) return;
-        final match = shops.firstWhere(
+        final match = shops.cast<BarberShopItem>().firstWhere(
               (shop) => shop.id == widget.barberId,
           orElse: () => shops.first,
         );
@@ -325,9 +326,6 @@ class _ConversationPageState extends State<ConversationPage>
             width: 48.w,
             height: 48.h,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.gradient1, AppColors.gradient2],
-              ),
               shape: BoxShape.circle,
             ),
             child: Center(
@@ -697,9 +695,6 @@ class _ConversationPageState extends State<ConversationPage>
                 height: 32.h,
                 margin: EdgeInsets.only(right: 8.w, bottom: 20.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.gradient1, AppColors.gradient2],
-                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -724,11 +719,13 @@ class _ConversationPageState extends State<ConversationPage>
                       vertical: hasImage ? 4.h : 12.h,
                     ),
                     decoration: BoxDecoration(
-                      color: isSent
-                          ? AppColors.yellow
-                          : (isDark
-                          ? AppColors.containerDark
-                          : AppColors.containerLight),
+                      color: hasImage
+                          ? Colors.transparent
+                          : (isSent
+                              ? AppColors.yellow
+                              : (isDark
+                                  ? AppColors.containerDark
+                                  : AppColors.containerLight)),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(18.r),
                         topRight: Radius.circular(18.r),
@@ -744,7 +741,7 @@ class _ConversationPageState extends State<ConversationPage>
                             ? Colors.white.withValues(alpha: 0.06)
                             : Colors.grey.withValues(alpha: 0.1),
                       ),
-                      boxShadow: isSent
+                      boxShadow: (isSent && !hasImage)
                           ? [
                         BoxShadow(
                           color: AppColors.yellow.withValues(alpha: 0.3),
@@ -806,9 +803,6 @@ class _ConversationPageState extends State<ConversationPage>
                 height: 32.h,
                 margin: EdgeInsets.only(left: 8.w, bottom: 20.h),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [AppColors.gradient1, AppColors.gradient2],
-                  ),
                   shape: BoxShape.circle,
                 ),
                 child: _buildMyAvatar(),

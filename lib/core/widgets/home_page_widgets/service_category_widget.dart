@@ -23,16 +23,16 @@ class ServiceCategory extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 73.w,
+      width: 70.w,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Material(
             color: Colors.white,
-            elevation: 4,
-            borderRadius: BorderRadius.circular(20),
+            elevation: 2,
+            shape: const CircleBorder(),
             child: InkWell(
-              borderRadius: BorderRadius.circular(20),
+              customBorder: const CircleBorder(),
               onTap: () {
                 Navigator.push(
                   context,
@@ -46,18 +46,17 @@ class ServiceCategory extends StatelessWidget {
                 );
               },
               child: SizedBox(
-                width: 73.w,
-                height: 73.h,
+                width: 65.w,
+                height: 65.w,
                 child: _buildContent(),
               ),
             ),
           ),
-          SizedBox(height: 8.h),
+          SizedBox(height: 6.h),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
-            maxLines: 2,
+            style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500),
             overflow: TextOverflow.ellipsis,
           ),
         ],
@@ -90,7 +89,7 @@ class ServiceCategory extends StatelessWidget {
       // Handle all other image formats (png, jpg, jpeg, gif, webp, bmp, etc.)
       else {
         return ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(12.r),
           child: Image.network(
             fullUrl,
             fit: BoxFit.cover,

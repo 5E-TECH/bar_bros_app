@@ -1,5 +1,8 @@
 {
   "app_name_styleup": "StyleUp",
+  "salom": "Salom",
+  "dark_mode": "Qorong'u rejim",
+  "light_mode": "Yorug' rejim",
   "app_name_barbros": "StyleUp",
   "services_title": "Xizmatlar",
   "phone_hint": "90 123 45 67",
@@ -90,6 +93,7 @@
   "eng_yaxshi_sartaroshlar": "Eng yaxshi sartaroshlar",
   "erkaklar_uchun_kategoriya_topilmadi": "Erkaklar uchun kategoriya topilmadi",
   "erkaklar_uchun_xizmatlar": "Erkaklar uchun xizmatlar",
+  "oxirgi_buyurtmalar": "Oxirgi buyurtmalar",
   "familiya": "Familiya",
   "familiya_bosh_bolmasligi_kerak": "Familiya bo'sh bo'lmasligi kerak",
   "familiya_juda_qisqa": "Familiya juda qisqa",
@@ -187,5 +191,6 @@
   "years_experience": "{years} yil tajriba",
   "tap_to_open_maps": "Xaritada ochish uchun bosing",
   "route": "Yo'nalish",
-  "Xaritani tanlang": "Xaritani tanlang"
+  "Xaritani tanlang": "Xaritani tanlang",
+  "yaqin_sartaroshxonalar": "Yaqin atrofdagi sartaroshxonalar"
 }

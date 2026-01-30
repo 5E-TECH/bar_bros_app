@@ -1,5 +1,8 @@
 {
   "app_name_styleup": "StyleUp",
+  "salom": "Hey",
+  "dark_mode": "Dark mode",
+  "light_mode": "Light mode",
   "app_name_barbros": "StyleUp",
   "services_title": "Services",
   "phone_hint": "90 123 45 67",
@@ -89,6 +92,7 @@
   "eng_yaxshi_sartaroshlar": "Best barbers",
   "erkaklar_uchun_kategoriya_topilmadi": "No categories for men found",
   "erkaklar_uchun_xizmatlar": "Services for men",
+  "oxirgi_buyurtmalar": "Last bookings",
   "familiya": "Last name",
   "familiya_bosh_bolmasligi_kerak": "Last name cannot be empty",
   "familiya_juda_qisqa": "Last name is too short",
@@ -187,5 +191,6 @@
   "years_experience": "{years} years experience",
   "tap_to_open_maps": "Tap to open in maps",
   "route": "Route",
-  "Xaritani tanlang": "Select map"
+  "Xaritani tanlang": "Select map",
+  "yaqin_sartaroshxonalar": "Nearby barbershops"
 }

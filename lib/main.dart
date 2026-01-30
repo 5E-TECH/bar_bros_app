@@ -34,13 +34,12 @@ void main() async {
       fallbackLocale: const Locale('uz'),
       useOnlyLangCode: true,
       child: const MyApp(),
-    ),
+    )
   );
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

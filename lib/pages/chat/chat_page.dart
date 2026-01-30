@@ -103,13 +103,24 @@ class _ChatPageState extends State<ChatPage>
     return BlocProvider.value(
       value: _chatBloc,
       child: Scaffold(
-        body: SafeArea(
-          child: Column(
-            children: [
-              _buildSearchBar(isDark),
-              Expanded(child: _buildChatList(isDark)),
-            ],
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: Text(
+            'chat'.tr(),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 22.sp,
+            ),
           ),
+          centerTitle: false,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+        ),
+        body: Column(
+          children: [
+            _buildSearchBar(isDark),
+            Expanded(child: _buildChatList(isDark)),
+          ],
         ),
       ),
     );
@@ -117,25 +128,32 @@ class _ChatPageState extends State<ChatPage>
 
   Widget _buildSearchBar(bool isDark) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+      padding: EdgeInsets.fromLTRB(16.w, 4.h, 16.w, 12.h),
       child: Container(
+        height: 44.h,
         decoration: BoxDecoration(
-          color: isDark ? AppColors.containerDark : AppColors.containerLight,
-          borderRadius: BorderRadius.circular(16.r),
-          border: Border.all(
-            color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.grey.withValues(alpha: 0.8),
-          ),
+          color: isDark ? Colors.grey[850] : Colors.grey[100],
+          borderRadius: BorderRadius.circular(12.r),
         ),
         child: TextField(
           controller: _searchController,
           style: TextStyle(
-            color: isDark ? Colors.white : AppColors.primaryDark,
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 14.sp,
           ),
           decoration: InputDecoration(
             hintText: 'suhbatlarni_qidirish'.tr(),
-            hintStyle: TextStyle(color: Colors.grey),
-            prefixIcon: Icon(Icons.search, color: Colors.grey),
+            hintStyle: TextStyle(
+              color: isDark ? Colors.grey[500] : Colors.grey[400],
+              fontSize: 14.sp,
+            ),
+            prefixIcon: Icon(
+              Icons.search_rounded,
+              color: isDark ? Colors.grey[500] : Colors.grey[400],
+              size: 20.sp,
+            ),
             border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(vertical: 12.h),
           ),
         ),
       ),
@@ -155,10 +173,17 @@ class _ChatPageState extends State<ChatPage>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.error_outline,
-                  size: 64.sp,
-                  color: Colors.grey.withValues(alpha: 0.3),
+                Container(
+                  padding: EdgeInsets.all(20.w),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.wifi_off_rounded,
+                    size: 40.sp,
+                    color: Colors.red[300],
+                  ),
                 ),
                 SizedBox(height: 16.h),
                 Text(
@@ -181,17 +206,25 @@ class _ChatPageState extends State<ChatPage>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    size: 64.sp,
-                    color: Colors.grey.withValues(alpha: 0.3),
+                  Container(
+                    padding: EdgeInsets.all(24.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.yellow.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.chat_bubble_outline_rounded,
+                      size: 48.sp,
+                      color: AppColors.yellow.withValues(alpha: 0.5),
+                    ),
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 20.h),
                   Text(
                     _searchQuery.isEmpty ? 'Suhbatlar yo\'q'.tr() : 'Natija topilmadi'.tr(),
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
                       fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -200,13 +233,19 @@ class _ChatPageState extends State<ChatPage>
           }
 
           return RefreshIndicator(
+            color: AppColors.yellow,
             onRefresh: () async {
               _chatBloc.add(const GetMyChatsEvent());
               await Future.delayed(const Duration(milliseconds: 500));
             },
-            child: ListView.builder(
+            child: ListView.separated(
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               itemCount: filtered.length,
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                indent: 76.w,
+                color: isDark ? Colors.grey[800] : Colors.grey[200],
+              ),
               itemBuilder: (context, index) {
                 final chat = filtered[index];
                 return _buildChatItem(chat, isDark, index);
@@ -279,7 +318,7 @@ class _ChatPageState extends State<ChatPage>
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: 18.sp,
+            fontSize: 16.sp,
           ),
         ),
       );
@@ -297,7 +336,7 @@ class _ChatPageState extends State<ChatPage>
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
-              fontSize: 18.sp,
+              fontSize: 16.sp,
             ),
           ),
         ),
@@ -345,89 +384,99 @@ class _ChatPageState extends State<ChatPage>
           ),
         );
       },
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 8.w),
-        child: Material(
-          elevation: isDark ? 0 : 4,
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(20.r),
-          child: Container(
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.containerDark : AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(20.r),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12.r),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ConversationPage(
+                barberId: chat.barberId,
+                barberName: title,
+                barberImageUrl: barberImage,
+              ),
             ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(20.r),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConversationPage(
-                      barberId: chat.barberId,
-                      barberName: title,
-                      barberImageUrl: barberImage,
+          );
+        },
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 12.h),
+          child: Row(
+            children: [
+              // Avatar with online indicator
+              Stack(
+                children: [
+                  SizedBox(
+                    width: 52.w,
+                    height: 52.h,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16.r),
+                      child: _buildAvatar(chat.barberId, title),
                     ),
                   ),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.all(16.w),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 56.w,
-                    height: 56.h,
-                    child: _buildAvatar(chat.barberId, title),
-                  ),
-                  SizedBox(width: 16.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: isDark ? Colors.white : AppColors.primaryDark,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 16.sp,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              _formatTime(chat.updatedAt),
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 13.sp,
-                              ),
-                            ),
-                          ],
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 14.w,
+                      height: 14.h,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isDark ? AppColors.containerDark : Colors.white,
+                          width: 2.w,
                         ),
-                        SizedBox(height: 6.h),
-                        Text(
-                          chat.lastMessage,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
+              SizedBox(width: 14.w),
+              // Chat info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15.sp,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          _formatTime(chat.updatedAt),
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[500] : Colors.grey[400],
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 4.h),
+                    Text(
+                      chat.lastMessage,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: isDark ? Colors.grey[400] : Colors.grey[500],
+                        fontSize: 13.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),
-    ));
+    );
   }
 }

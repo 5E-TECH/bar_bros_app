@@ -1,5 +1,8 @@
 {
   "app_name_styleup": "StyleUp",
+  "salom": "Привет",
+  "dark_mode": "Тёмная тема",
+  "light_mode": "Светлая тема",
   "app_name_barbros": "StyleUP",
   "services_title": "Услуги",
   "phone_hint": "90 123 45 67",
@@ -89,6 +92,7 @@
   "eng_yaxshi_sartaroshlar": "Лучшие барберы",
   "erkaklar_uchun_kategoriya_topilmadi": "Категории для мужчин не найдены",
   "erkaklar_uchun_xizmatlar": "Услуги для мужчин",
+  "oxirgi_buyurtmalar": "Последние записи",
   "familiya": "Фамилия",
   "familiya_bosh_bolmasligi_kerak": "Фамилия не должна быть пустой",
   "familiya_juda_qisqa": "Фамилия слишком короткая",
@@ -187,5 +191,6 @@
   "years_experience": "{years} лет опыта",
   "tap_to_open_maps": "Нажмите, чтобы открыть карту",
   "route": "Маршрут",
-  "Xaritani tanlang": "Выберите карту"
+  "Xaritani tanlang": "Выберите карту",
+  "yaqin_sartaroshxonalar": "Ближайшие барбершопы"
 }
